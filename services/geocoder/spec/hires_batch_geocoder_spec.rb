@@ -2,6 +2,7 @@
 require 'tmpdir'
 require 'fileutils'
 require_relative '../../../spec/rspec_configuration.rb'
+require_relative '../../../spec/spec_helper.rb'
 require_relative '../lib/hires_batch_geocoder'
 
 
@@ -14,6 +15,9 @@ describe CartoDB::HiresBatchGeocoder do
   end
 
   before(:each) do
+    @log = mock
+    @log.stubs(:append)
+    @log.stubs(:append_and_store)
     @working_dir = Dir.mktmpdir
     @input_csv_file = path_to '../../table-geocoder/spec/fixtures/nokia_input.csv'
     CartoDB::HiresBatchGeocoder.any_instance.stubs(:config).returns({
@@ -22,7 +26,8 @@ describe CartoDB::HiresBatchGeocoder do
         'token' => '',
         'mailto' => ''
       })
-    @batch_geocoder = CartoDB::HiresBatchGeocoder.new(@input_csv_file, @working_dir)
+    @geocoding_model = FactoryGirl.create(:geocoding, kind: 'high-resolution', formatter: '{street}' )
+    @batch_geocoder = CartoDB::HiresBatchGeocoder.new(@input_csv_file, @working_dir, @log, @geocoding_model)
   end
 
   after(:each) do
@@ -32,9 +37,9 @@ describe CartoDB::HiresBatchGeocoder do
   describe '#run' do
     it 'uploads a file to the batch server' do
       @batch_geocoder.expects(:upload).once
-      @batch_geocoder.expects(:update_status).once
-      @batch_geocoder.expects(:status).once.returns('completed')
+      @batch_geocoder.expects(:update_status).twice
       @batch_geocoder.run
+      assert @geocoding_model.state == 'completed'
     end
 
     it 'times out if not finished before the DEFAULT_TIMEOUT' do
@@ -88,19 +93,27 @@ describe CartoDB::HiresBatchGeocoder do
   describe '#cancel' do
     it 'sends a cancel put request and gets the status, processed and total rows' do
       request_id = 'dummy_request_id'
+      @geocoding_model.remote_id = request_id
+      @geocoding_model.save
       @batch_geocoder.stubs(:request_id).returns(request_id)
       url = @batch_geocoder.send(:api_url, action: 'cancel')
       url.should match(%r'/#{request_id}/')
       url.should match(%r'action=cancel')
 
       expected_status = 'cancelled'
-      expected_processed_rows = '20'
-      expected_total_rows = '30'
+      expected_processed_rows = 20
+      expected_success_rows = 17
+      expected_failed_rows = 0
+      expected_empty_rows = 3 
+      expected_total_rows = 30
 
       response_body = <<END_XML
 <Response>
   <Status>#{expected_status}</Status>
   <ProcessedCount>#{expected_processed_rows}</ProcessedCount>
+  <SuccessCount>#{expected_success_rows}</SuccessCount>
+  <ErrorCount>#{expected_failed_rows}</ErrorCount>
+  <InvalidCount>#{expected_empty_rows}</InvalidCount>
   <TotalCount>#{expected_total_rows}</TotalCount>
 </Response>
 END_XML
@@ -117,19 +130,27 @@ END_XML
   describe '#update' do
     it 'gets the status, processed and total rows by sending a get request' do
       request_id = 'dummy_request_id'
+      @geocoding_model.remote_id = request_id
+      @geocoding_model.save
       @batch_geocoder.stubs(:request_id).returns(request_id)
       url = @batch_geocoder.send(:api_url, action: 'status')
       url.should match(%r'/#{request_id}/')
       url.should match(%r'action=status')
 
       expected_status = 'running'
-      expected_processed_rows = '20'
-      expected_total_rows = '30'
+      expected_processed_rows = 20
+      expected_success_rows = 17
+      expected_failed_rows = 0
+      expected_empty_rows = 3 
+      expected_total_rows = 30
 
       response_body = <<END_XML
 <Response>
   <Status>#{expected_status}</Status>
   <ProcessedCount>#{expected_processed_rows}</ProcessedCount>
+  <SuccessCount>#{expected_success_rows}</SuccessCount>
+  <ErrorCount>#{expected_failed_rows}</ErrorCount>
+  <InvalidCount>#{expected_empty_rows}</InvalidCount>
   <TotalCount>#{expected_total_rows}</TotalCount>
 </Response>
 END_XML
@@ -152,6 +173,8 @@ END_XML
 
     it 'downloads the result file from the remote server' do
       request_id = 'dummy_request_id'
+      @geocoding_model.remote_id = request_id
+      @geocoding_model.save
       @batch_geocoder.stubs(:request_id).returns(request_id)
       expected_response_body = 'dummy result file contents'
       url = @batch_geocoder.send(:api_url, {}, 'result')
@@ -168,6 +191,8 @@ END_XML
 
     it 'raises an exception if cannot get a result file' do
       request_id = 'dummy_request_id'
+      @geocoding_model.remote_id = request_id
+      @geocoding_model.save
       @batch_geocoder.stubs(:request_id).returns(request_id)
       expected_response_body = 'dummy result file contents'
       url = @batch_geocoder.send(:api_url, {}, 'result')
