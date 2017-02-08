@@ -897,7 +897,6 @@ L.Draw.Circle = L.Draw.SimpleShape.extend({
 		L.Draw.SimpleShape.prototype._fireCreatedEvent.call(this, circle);
 	},
 
-
 	_onMouseMove: function (e) {
 		var latlng = e.latlng,
 			showRadius = this.options.showRadius,
@@ -1043,10 +1042,6 @@ L.Edit.Poly = L.Handler.extend({
 		L.setOptions(this, options);
 	},
 
-	_onMouseMove: function(e) {
-		this._poly._tooltip.updatePosition(e.latlng);
-	},
-
 	addHooks: function () {
 		if (this._poly._map) {
 			if (!this._markerGroup) {
@@ -1054,12 +1049,6 @@ L.Edit.Poly = L.Handler.extend({
 			}
 			this._poly._map.addLayer(this._markerGroup);
 		}
-		this._poly._map.on('mousemove', this._onMouseMove, this);
-		this._poly._tooltip = new L.Tooltip(this._poly._map);
-		this._poly._tooltip.updateContent({
-			text: L.drawLocal.edit.handlers.edit.tooltip.text,
-			subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-		});
 	},
 
 	removeHooks: function () {
@@ -1067,11 +1056,6 @@ L.Edit.Poly = L.Handler.extend({
 			this._poly._map.removeLayer(this._markerGroup);
 			delete this._markerGroup;
 			delete this._markers;
-			this._poly._tooltip.dispose();
-			this._poly._tooltip = null;
-
-			this._poly._map.off('mousemove', this._onMouseMove, this);
-			// this._poly._map = null;
 		}
 	},
 
@@ -1340,12 +1324,6 @@ L.Edit.SimpleShape = L.Handler.extend({
 				this._initMarkers();
 			}
 			this._map.addLayer(this._markerGroup);
-			this._map.on('mousemove', this._onMouseMove, this);
-			this._tooltip = new L.Tooltip(this._map);
-			this._tooltip.updateContent({
-				text: L.drawLocal.edit.handlers.edit.tooltip.text,
-				subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-			});
 		}
 	},
 
@@ -1361,11 +1339,8 @@ L.Edit.SimpleShape = L.Handler.extend({
 			this._map.removeLayer(this._markerGroup);
 			delete this._markerGroup;
 		}
-		this._tooltip.dispose();
-		this._tooltip = null;
 
-		this._map.off('mousemove', this._onMouseMove, this);
-		// this._map = null;
+		this._map = null;
 	},
 
 	updateMarkers: function () {
@@ -1451,9 +1426,6 @@ L.Edit.SimpleShape = L.Handler.extend({
 		marker.setOpacity(1);
 
 		this._fireEdit();
-	},
-	_onMouseMove: function(e) {
-		this._tooltip.updatePosition(e.latlng);
 	},
 
 	_move: function () {
@@ -1571,11 +1543,7 @@ L.Edit.Rectangle = L.Edit.SimpleShape.extend({
 		for (var i = 0, l = this._resizeMarkers.length; i < l; i++) {
 			this._resizeMarkers[i].setLatLng(corners[i]);
 		}
-	},
-
-	_onMouseMove: function(e) {
-		this._tooltip.updatePosition(e.latlng);
-	},
+	}
 });
 
 L.Rectangle.addInitHook(function () {
@@ -1623,20 +1591,11 @@ L.Edit.Circle = L.Edit.SimpleShape.extend({
 		this._shape.setLatLng(latlng);
 	},
 
-	_onMouseMove: function(e) {
-		this._tooltip.updatePosition(e.latlng);
-	},
-
-
 	_resize: function (latlng) {
-		var metric = (localStorage.getItem('units') === 'english') ? false : true;
 		var moveLatLng = this._moveMarker.getLatLng(),
 			radius = moveLatLng.distanceTo(latlng);
+
 		this._shape.setRadius(radius);
-		this._tooltip.updateContent({
-			text: L.drawLocal.edit.handlers.edit.tooltip.text,
-			subtext: 'Radius: ' + L.GeometryUtil.readableDistance(radius, metric)
-		});
 	}
 });
 
@@ -2593,11 +2552,11 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 			this._featureGroup.eachLayer(this._enableLayerEdit, this);
 
-			// this._tooltip = new L.Tooltip(this._map);
-			// this._tooltip.updateContent({
-			// 	text: L.drawLocal.edit.handlers.edit.tooltip.text,
-			// 	subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
-			// });
+			this._tooltip = new L.Tooltip(this._map);
+			this._tooltip.updateContent({
+				text: L.drawLocal.edit.handlers.edit.tooltip.text,
+				subtext: L.drawLocal.edit.handlers.edit.tooltip.subtext
+			});
 
 			this._map.on('mousemove', this._onMouseMove, this);
 		}
@@ -2611,10 +2570,10 @@ L.EditToolbar.Edit = L.Handler.extend({
 			// Clear the backups of the original layers
 			this._uneditedLayerProps = {};
 
-			// this._tooltip.dispose();
-			// this._tooltip = null;
+			this._tooltip.dispose();
+			this._tooltip = null;
 
-			// this._map.off('mousemove', this._onMouseMove, this);
+			this._map.off('mousemove', this._onMouseMove, this);
 		}
 	},
 
@@ -2775,7 +2734,7 @@ L.EditToolbar.Edit = L.Handler.extend({
 	},
 
 	_onMouseMove: function (e) {
-		// this._tooltip.updatePosition(e.latlng);
+		this._tooltip.updatePosition(e.latlng);
 	},
 
 	_hasAvailableLayers: function () {

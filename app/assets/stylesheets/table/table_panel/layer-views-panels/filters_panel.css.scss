@@ -99,7 +99,7 @@
     .scrollpane {
       overflow: auto;
       outline: none;
-      min-height: 375px;
+
       &:hover .jspVerticalBar { @include opacity(1); }
 
       .jspContainer { overflow: hidden; position: relative; }
@@ -181,45 +181,12 @@
 
     }
 
-    .shape_filter {
-      padding: 5px 10px 5px 10px; 
-    }
-
-    .button .small {
-      padding: 3px;
-    }
-
-    .drawDetails {
-      padding: 0 50px 5px 10px;
-
-      a {
-        cursor: 'pointer';
-      }
-    }
-
-    span.drawRadius {
-      outline: none;
-      display: block;
-      border: solid thin #fff;
-      width: 111px;
-      height: 20px;
-      text-align: right;
-      color: #000;
-      padding-right: 3px;
-
-      &:hover {
-        border: solid thin #bbb;
-        cursor: pointer;
-      }
-    }
-
-
     ul.filters {
       position:relative;
 
       width: 385px;
       margin: 0;
-      
+
       .filter { // generic styles for all the filters
         position:relative;
 
@@ -229,26 +196,6 @@
         @include box-shadow(0px 4px 4px #EDEDED);
 
         text-align:left;
-        //TODO
-        input.filterInput {
-          background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
-          border: 1px solid #999;
-          padding: 3px 18px 3px 4px; 
-          border-radius: 3px;
-          transition: background 0.4s;
-        }
-        input.filterInput.x { background-position: right 5px center; }
-        input.filterInput.x { cursor: pointer; }
-        input.filterInput.x::-ms-clear {display: none; width:0; height:0;}
-
-        .filterSelectViewOptions {
-          margin: 0 30px 0 30px;
-
-          ul.items {
-            margin: 0;
-          }
-
-        }
 
         .header {
           position:relative;
@@ -446,14 +393,7 @@
 
         }
 
-        .scroll { 
-          width: 380px; 
-          max-height: 156px; 
-          overflow: hidden; 
-          outline:none;
-          overflow-y: scroll; 
-          overflow-x: hidden 
-          }
+        .scroll { width: 380px; max-height: 156px; overflow: hidden; outline:none; }
 
       } // data
 
@@ -465,7 +405,7 @@
         padding: 0;
         clear:both;
         overflow:hidden;
-        z-index: 50;
+        z-index: 100;
         background:#fff;
 
         .view_mode {
@@ -568,13 +508,6 @@
         padding: 0;
         width: 325px;
 
-        .li-focus-item {
-            border-top-color: red;
-            border-bottom: solid;
-            border-bottom-width: 1px;
-            border-bottom-color: red
-          }
-
         li {
           clear:both;
           overflow:hidden;
@@ -587,8 +520,6 @@
           border-top: 1px solid rgba(#999, .25);
 
           cursor: pointer;
-
-          
 
           p {
 
@@ -628,7 +559,6 @@
           &.selected:after  { @include opacity(0); }
           &.selected:before { background: #82D992; @include scale(1); }
           &.selected .value { background: #82D992; color:#fff; }
-          &.selected .value-largeset { background: #82D992; color:#fff; }
 
           .value {
             position:absolute;
@@ -642,37 +572,6 @@
 
             @include simple-transition(background-color, 100ms);
           }
-
-          .value-largeset {
-            position:absolute;
-            top: 10px; right: 25px;
-            font-size:10px;
-            padding: 2px 4px;
-            border:1px solid #82D992;
-            background:#fff;
-            @include border-radius(2px);
-            color:#82D992;
-
-            @include simple-transition(background-color, 100ms);
-          }
-
-          &:hover .remove-item { @include opacity(1); }
-
-          .remove-item {
-            float: right;
-            margin-top: 0;
-            margin-right: 5px;
-            min-height: 13px;
-            @include opacity(0);
-
-            @include size(13px);
-            @include position(17px, 0, false, false);
-            @include simple-transition(opacity, 150ms);
-            @include common-sprite(close_grey);
-
-            &:hover {@include common-sprite(close_grey, $offset-y:-13px);}
-          }
-
         }
       }
     } // filter.selection
@@ -685,47 +584,6 @@
       .empty  { display:none; }
 
       .loading   { display:block; }
-
-      .range-text {
-        padding: 1px 3px 1px 3px;
-        display: inline;
-      }
-
-      .range-text:hover {
-        padding: 0 2px 0 2px;
-        border: solid thin #666;
-        cursor: pointer;
-      }
-
-      .range-date-text {
-        padding: 1px 3px 1px 3px;
-        display: inline;
-      }
-
-      .range-date-text:hover {
-        padding: 0 2px 0 2px;
-        border: solid thin #666;
-        cursor: pointer;
-      }
-
-      .date-min, .date-max {
-        width: 80px;
-        cursor: text;
-
-          
-
-      }
-
-      .has-focus {
-          border-color: red;
-        }
-
-      .ui-datepicker-div {
-        position: absolute;
-        z-index: 1;
-        top: 68px;
-        left: 30px;        
-      }
 
       .range-number { height: 35px; }
       .range-number input { width: 45%; }

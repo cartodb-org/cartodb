@@ -1,6 +1,6 @@
 // cartodb.js version: 3.15.9
 // uncompressed version: cartodb.uncompressed.js
-// sha: 044b2a698682ab3b40af215c411890fed4f8d2e1
+// sha: 1ee7c836065040ca033c2d18c64b865c176b935f
 (function() {
   var define;  // Undefine define (require.js), see https://github.com/CartoDB/cartodb.js/issues/543
   var root = this;
@@ -26109,42 +26109,6 @@ if (typeof window !== 'undefined') {
       cdb._loadJST();
       root.cdb.god = new Backbone.Model();
 
-      root.cdb.god.adjustListFocus = function(e) {
-        if (cdb.god.currentFilterLi) {
-            if (e.which === 40){
-                e.preventDefault();
-                e.stopPropagation();
-                next = cdb.god.currentFilterLi.next();
-                if(next.length > 0){
-                    cdb.god.currentFilterLi.removeClass('li-focus-item');
-                    cdb.god.currentFilterLi = next;
-                    cdb.god.currentFilterLi.addClass('li-focus-item');
-                }
-            } else if(e.which === 38){
-                e.preventDefault();
-                e.stopPropagation();
-                next = cdb.god.currentFilterLi.prev();
-                if(next.length > 0){
-                    cdb.god.currentFilterLi.removeClass('li-focus-item');
-                    cdb.god.currentFilterLi = next;
-                    cdb.god.currentFilterLi.addClass('li-focus-item');
-                }
-            } else if (e.which === 13) {
-                cdb.god.currentFilterLi.click();
-            }
-            var scrollContainer = cdb.god.currentFilterLi.scrollParent();
-            // scrollContainer.animate({
-            //     scrollTop: cdb.god.currentFilterLi.offset().top - scrollContainer.offset().top + scrollContainer.scrollTop()
-            // });
-            scrollContainer.scrollTop(
-                cdb.god.currentFilterLi.offset().top - scrollContainer.offset().top + scrollContainer.scrollTop()
-            );
-        }
-      }
-
-      $(window).keydown(root.cdb.god.adjustListFocus);
-
-
       ready && ready();
     };
 
@@ -33123,18 +33087,13 @@ cdb.geo.ui.Tooltip = cdb.geo.ui.InfoBox.extend({
 
             // loop through content values
             data.fields = c.fields;
+
             // alternamte names
             var names = this.options.alternative_names;
             if (names) {
               for(var i = 0; i < data.fields.length; ++i) {
                 var f = data.fields[i];
-                if(f.title){
-                  f.title = names[f.alias] || names[f.title] || f.title;
-                  //If alias has alternate name remove alias so that title is shown instead (hacky??)
-                  if(f.title === names[f.alias]){
-                    f.alias = null
-                  }
-                }
+                f.title = names[f.title] || f.title;
               }
             }
             this.show(pos, data);
@@ -33249,7 +33208,8 @@ cdb.geo.ui.Tooltip = cdb.geo.ui.InfoBox.extend({
     return this;
   }
 
-});/**
+});
+/**
  *  FullScreen widget:
  *
  *  var widget = new cdb.ui.common.FullScreen({

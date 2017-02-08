@@ -36,6 +36,7 @@
     /*overflow: hidden;*/
     outline:none;
     width: 100%;
+
     &:hover .jspVerticalBar { @include opacity(1); }
 
     .jspContainer { /*overflow: hidden;*/ position: relative; }
