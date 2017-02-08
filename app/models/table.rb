@@ -47,7 +47,6 @@ class Table
   PUBLIC_ATTRIBUTES = {
     id: :id,
     name: :name,
-    aliases: :aliases,
     alias: :alias,
     schema_alias: :schema_alias,
     privacy: :privacy_text,
@@ -1363,10 +1362,6 @@ class Table
 
   def schema_alias
     @user_table.schema_alias
-  end
-
-  def aliases
-    @user_table.aliases
   end
 
   def external_source_visualization
