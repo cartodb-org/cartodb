@@ -23,8 +23,7 @@
 // Moved with scroll behaviour
 .Filters.is-fixed {
   position: fixed;
-  background: $DarkGrey8;
-  border-bottom: 1px solid $Black;
+  background: white;
 }
 .Filters.with-long-separator {
   &:before {
@@ -61,7 +60,7 @@
   top:80px;
   width:100%;
   height:1px;
-  background-color: $Black;;
+  background-color: $cStructure-softLine;
   z-index:0;
 }
 
@@ -93,19 +92,6 @@
 
   &:first-child { margin-left: 0 }
   &:last-child { margin-right: 0 }
-  .Filters-typeLink {
-	color: $Grey7;
-	&:hover {
-	color: $Grey2;
-	}
-	&.js-create_empty{ 
-		@include actionButton;
-		Padding: 0 12px;
-		line-height: 28px;
-		margin-top: 30px;
-	}
-  }
-
 }
 .Filters-typeItem.Filters-typeItem--moreMargins {
   margin-right: 15px;
@@ -129,7 +115,7 @@
   padding-right: 2px;
   font-size: 14px;
   line-height: 80px;
-  color: $Grey7;
+  color: $cTypography-linkSelected;
   background: transparent;
   border: none;
   outline: none;
@@ -152,12 +138,7 @@
   margin-left: 1px;
 
 }
-.Filters-searchLink:hover { color: $Grey6  }
-.Filters-searchItem {
-  display:none;
-  margin-right:0;
-  &:after { content:'' }
-}
+.Filters-searchLink:hover { color: #333 }
 .Filters-searchForm {
   position:relative;
   @include display-flex();
@@ -172,7 +153,6 @@
   outline:none;
   border:none;
   background:none;
-  color: $Amber1;
   font-size: $sFontSize-large;
   font-weight: $sFontWeight-lighter;
 }
@@ -220,13 +200,13 @@ a.Filters-cleanSearch { line-height:32px }
   display: inline-block;
   line-height: 80px;
   font-size: 14px;
-  color: $Teal4;
+  color: $cTypography-link;
   background: transparent;
   border: none;
   outline: none;
 
   &:hover {
-    color: $Teal1;
+    color: $cTypography-linkHover;
     text-decoration: none;
   }
 }
@@ -238,7 +218,7 @@ a.Filters-cleanSearch { line-height:32px }
   }
 }
 .Filters-typeLink.is-selected {
-  color:$Grey1;;
+  color:$cTypography-linkSelected;
 
   &:before {
     content:'';
@@ -247,8 +227,8 @@ a.Filters-cleanSearch { line-height:32px }
     left:0;
     right:0;
     width:100%;
-    height:3px;
-    background:$SelectionBlue2;
+    height:1px;
+    background:$cTypography-linkSelected;
   }
 
   &:hover {
@@ -273,12 +253,12 @@ a.Filters-cleanSearch { line-height:32px }
 .Filters-orderLink {
   @include inline-block();
   font-size: 19px;
-  color: $Grey7;
+  color: #CCCCCC;
   line-height:19px;
-  &:hover { color: $Grey2; }
+  &:hover { color: #666 }
 }
 .Filters-orderLink.is-selected {
-  color:$SelectionBlue1;
+  color:#666666;
   &:hover { cursor: default }
 }
 .Filters-orderLink--graph { line-height: 26px }
@@ -345,10 +325,24 @@ a.Filters-cleanSearch { line-height:32px }
   left: 50%;
   width: 1000px;
   margin-left: -500px;
+  background: $cStructure-grayBkg;
 }
 .Filters--navListing.Filters--navListing--withFlashMessage {
   top: 157px + 81px;
 }
+.Filters--navListing:after {
+  content: '';
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  width: 1020px;
+  height: 18px;
+  margin-left: -510px;
+  background-color: transparent!important;
+  @include background-gradient(rgba(#F9F9F9,1), rgba(#F9F9F9,0));
+  z-index: 2;
+}
+.Filters--navListing .Filters-separator { background-color: $cStructure-mainLine }
 .Filters--navListing .Filters-searchInput { margin-top: -2px } /* hacking line-height between search and input */
 .Filters--navListing .Button--create {
   height: 34px;
@@ -372,10 +366,7 @@ a.Filters-cleanSearch { line-height:32px }
 .Filters-darrow {
   position: relative;
   top: -1px;
-  margin-left: 6px;
-  font-size: 7px;
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
+  font-size: 6px;
 }
 @media only screen and (max-width: 500px) {
   .Filters-searchEnabler {

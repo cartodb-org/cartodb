@@ -5,18 +5,20 @@
 //
 // --------------------------------------------------
 .DefaultTitle {
-  color: $Grey1;
-  font-weight: normal;
-  margin: 0px;
-  font-size: 15px;
+  font-weight: $sFontWeight-normal;
+  font-size: $sFontSize-larger;
+  line-height: 20px;
+  color: $cTypography-paragraphs;
 }
 .DefaultTitle.is-disabled {
   color: rgba($cTypography-paragraphs, 0.4);
 }
 .DefaultTitle-link {
-  color: $Grey1;
+  font-weight: $sFontWeight-normal;
+  font-size: $sFontSize-larger;
+  color: $cTypography-paragraphs;
   &:hover {
-    color: $White;
-    text-decoration: none;
+    color: $cTypography-headers;
+    text-decoration: underline;
   }
 }

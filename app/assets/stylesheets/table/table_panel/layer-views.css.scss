@@ -13,34 +13,36 @@
   @import "../../table/table-sprite";
   @import "../../old_common/vars";
   @import "../../old_common/mixins";
-  @import "../../variables/colors";
 
 
   // LOCAL VARS
-  $corner_radius: 0px;
-   
+  $corner_radius: 6px;
+  
 
   // Layer actions view!
-  // bb_layer_view
   .layer-views {
-    @include inline-block(); 
-    position:absolute; 
-    top:30px;
-    right:0;  
+    position:absolute;
+    top:60px;
+    right:0;
     left:65px;
     bottom:0;
-    background:$DarkGrey3;
-    border-left: 1px solid $DarkGrey6;
-    padding: 12px 0 12px 12px;
+    @include inline-block();
+    background:white;
+    @include border-top-left-radius($corner_radius);
+    border:1px solid #D0D0D0;
+    border-right:0;
+    border-bottom:0;
+    @include box-shadow(rgba(black, 0.07) 2px -1px 8px 0);
+    letter-spacing:0;
     z-index:5;
 
 
     h3 {
       padding: 22px 0 21px 30px;
-      font-size: 14px;
-      font-weight: normal;
+      border-bottom:1px solid rgba(#999999,0.25);
+      font:normal 15px $text-fonts;
       line-height:normal;
-      color: $Grey1;
+      color: #666666;
     }
 
     // For any 
@@ -55,7 +57,7 @@
     // than the panel
     .panel_content {
       position:absolute;
-      top:0px;
+      top:61px;
       left:0;
       right:0;
       bottom:0;
@@ -64,7 +66,7 @@
       .wrapper {
         position:absolute;
         top:0; left:0; bottom:0; right:0;
-        padding: 0px 12px;
+        padding:0 30px 16px 30px;
         overflow:auto;
       }
       
@@ -77,7 +79,9 @@
       div.no_content {
         margin:20px 0 0 0;
         padding:20px;
+        border:1px solid #E6E6E6;
         @include border-radius(4px);
+        color:#666666;
         text-align:center;
         line-height:18px;
       }
@@ -111,7 +115,8 @@
         height:100%;
       }
       
-      &:before { left:36px; background:$DarkGrey6; }
+      &:after { background:rgba($cGray4,0.50); }
+      &:before { left:36px; background:rgba(#509DD7,0.25); }
 
       h3 { padding-left:22px }
       
@@ -121,6 +126,7 @@
         left:0;
         height:22px;
         width:100%;
+        @include background(linear-gradient(top, white, rgba(white,0)));
         z-index:10;
       }
     }

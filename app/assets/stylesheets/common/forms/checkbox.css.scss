@@ -20,41 +20,40 @@
   width: 16px;
   height: 16px;
   outline: none;
-  border: 1px solid $Black;
-  border-radius: 2px;
-  background: $checkbox_bg_normal;
+  border: 2px solid $cStructure-mainLine;
+  border-radius: 3px;
+  background: white;
 
   &:hover {
-    background-color: $checkbox_bg_hover;
- }
+    border-color: #AAA;
+  }
 }
 .Checkbox-input:focus {
-  box-shadow: focus_visual_style;
+  border-color: #AAA;
 }
 .Checkbox-input.is-checked {
-  background: $checkbox_bg_active_normal;
   &:before, &:after {
     content: '';
     position: absolute;
     height: 2px;
-    background: $Black;
+    background: #0090D7;
   }
 
   &:before {
-    left: 3px;
+    left: 2px;
     width: 4px;
-    @include transforms(rotate(55deg));
+    @include transform(rotate(55deg));
   }
   &:after {
-    top: 6px;
-    left: 4px;
+    top: 5px;
+    left: 3px;
     width: 8px;
-    @include transforms(rotate(-60deg));
+    @include transform(rotate(-60deg));
   }
 }
 .Checkbox-label {
   margin-left: 8px;
-  color: $Grey2;
+  color: $cTypography-secondary;
 }
 .Checkbox.is-disabled .Checkbox-input {
   @include opacity(0.4);

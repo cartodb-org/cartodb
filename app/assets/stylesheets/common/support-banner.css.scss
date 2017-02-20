@@ -49,7 +49,7 @@
   color: $cTypography-secondary;
 }
 .SupportBanner-infoDescriptionLink {
-  text-decoration: none;
+  text-decoration: underline;
   color: $cTypography-secondary;
   &:hover { color: $cTypography-paragraphs }
 }

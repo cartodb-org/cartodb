@@ -4,7 +4,6 @@
     </div>
 
     <div class="Header-settings">
-      <% if current_user.has_feature_flag?('bbg_profile_menu') %>
       <ul class="Header-settingsList">
         <li class="Header-settingsItem u-hideOnMobile">
           <a href="<%= maps_index_path %>" class="Header-settingsLink">Maps</a>
@@ -14,7 +13,6 @@
           <a href="<%= datasets_index_path %>" class="Header-settingsLink">Datasets</a>
         </li>
       </ul>
-      <% end %>
     </div>
   </div>
 </div>

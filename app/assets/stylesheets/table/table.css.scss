@@ -6,8 +6,6 @@
   @import "../old_common/form-elements";
   @import "../table/table-sprite";
   @import "../old_elements/progress-bar";
-  @import "../variables/colors";
-  @import "../variables/mixins";
 
   @-webkit-keyframes highlight-fade {
     0%   { background: none; }
@@ -31,13 +29,13 @@
 
 div.panes {
   position:absolute;
-  top:47px;
+  top:78px;
   right:0;
   bottom:0;
   left:0;
 
   // Should be value of default panes top + height of table_title below
-  &.table-view { top: 77px; }
+  &.table-view { top: 128px; }
 
   .emptyTableContainer {
     position:fixed;
@@ -93,28 +91,25 @@ div.table {
 
   .table_title {
     position: fixed;
-    top: 34px;
+    top: 78px;
     left: 0;
     right: 0;
-    height: 30px;
+    height: 50px;
     z-index: 2;
-    background: $DarkGrey6;
-    border-bottom: 1px solid $Black;
-    color: $Grey2;
-    padding: 0 12px;
-    font-size: 15px;
-    line-height: 30px; 
+    background: whitesmoke;
+    padding: 5px;
   }
 
   table {
     position:relative;
     z-index:1;
     width:100%;
+    background:white;
 
     // Table head
     thead {
       width:100%;
-      height:47px;
+      height:60px;
 
       div.sqlview {
         position: absolute;
@@ -151,7 +146,7 @@ div.table {
 
       tr {
         width:100%;
-        height:47px;
+        height:64px;
         z-index:2;
         background: image-url('layout/thead_bkg.jpg') repeat 0 0;
 
@@ -163,17 +158,18 @@ div.table {
             position:relative;
             display:block;
             width:100%;
-            height:47px;
+            height:66px;
             z-index:1;
 
             & > div {
               position:fixed;
-              @include inline-block(); 
+              @include inline-block();
               width: inherit;
-              height:48px;
-              margin-top:-1px;
-              background: #232323;
-              border-bottom:1px solid $Black;
+              height:41px;
+              margin:0;
+              padding:10px 0 15px;
+              background: image-url('layout/thead_bkg.jpg') repeat 0 0;
+              border-bottom:1px solid #CCCCCC;
               z-index:1;
 
               &:after {
@@ -182,7 +178,8 @@ div.table {
                 left:0px;
                 z-index:0;
                 width:1px;
-                height:42px;                
+                height:42px;
+                background:rgba(#D9D9D9,0.5);
                 content:' ';
               }
             }
@@ -196,7 +193,8 @@ div.table {
 
                 span {
                   @include inline-block();
-                  margin:6px 0 5px 5px;                
+                  margin:6px 0 5px 5px;
+                  color:#7C7C7C;
 
                 }
               }
@@ -205,20 +203,23 @@ div.table {
                 div, a {
                   @include inline-block();
                   margin:6px 0 5px 5px;
-                  color:$Grey1;
+                  color:#7C7C7C;
+
 
                   &:after {
                     @include inline-block();
                     position:relative;
-                    left:3px;
-                    border-top:5px solid $Grey1;
-                    border-right:4px solid transparent;
-                    border-left:4px solid transparent;
+                    left:2px;
+                    border-top:3px solid #7C7C7C;
+                    border-right:3px solid transparent;
+                    border-left:3px solid transparent;
                     content:'';
-                    top: 5px;
                   }
 
                   &:hover {
+                    color:#565656;
+                    text-decoration:none;
+                    &:after {border-top-color:#565656;}
                   }
 
 
@@ -227,7 +228,7 @@ div.table {
               a, div {
                 @include inline-block();
                 margin:6px 0 5px 5px;
-                color:$Grey1;
+                color:#7C7C7C;
 
                 &:hover { text-decoration:none; }
 
@@ -246,7 +247,7 @@ div.table {
               @include default-input();
 
               input {
-                @include border-radius(2px);
+                @include border-radius(3px);
                 margin:0;
                 padding:3px 4px;
                 border:1px solid #CCCCCC;
@@ -264,20 +265,20 @@ div.table {
                 color:#999999;
 
                 &.disabled {
-                  color: $Grey2;
+                  color: #666666;
                 }
 
                 &:hover {
                   position:relative;
                   padding:0 10px 0 0;
-                  color:$Grey2;
+                  color:#666666;
                   text-decoration:none;
 
                   &.own:after {
                     position:absolute;
                     right:0;
                     margin:10px 0 0 5px;
-                    border-top:3px solid $Grey1;
+                    border-top:3px solid #7C7C7C;
                     border-right:3px solid transparent;
                     border-left:3px solid transparent;
                     content:' ';
@@ -300,6 +301,11 @@ div.table {
             @include transition-property("padding-right");
             @include transition-duration(500ms);
             padding-right:62px;
+          }
+
+          // Column options
+          div.dropdown {
+            width:147px!important;
           }
         }
       }
@@ -337,11 +343,12 @@ div.table {
       tr.empty_table {}
 
       tr.placeholder, tr.placeholder td {
+        border:1px solid #ECECEC;
         height: 40px;
         cursor:pointer;
 
         .addNewRow {
-          color: $Grey2;
+          color: #e5e5e5;
           vertical-align: middle;
           text-align: center;
           font-weight:bolder;
@@ -355,11 +362,11 @@ div.table {
         border-bottom:0px;
 
         &:hover {
-         
+          border-color:#ECECEC;
           background:inherit;
 
           & + tr {
-            
+            border-top-color:#ECECEC;
           }
         }
       }
@@ -382,7 +389,8 @@ div.table {
         position:relative;
         width:100%;
         // z-index:0;
-        border-top:1px solid $DarkGrey8;
+        background:white;
+        border-top:1px solid #ECECEC;
 
         td {
           &:not(.row_header) {
@@ -399,31 +407,31 @@ div.table {
           }
 
           div.cell {
-            color:$Amber1;
             display:block;
-            font-size: 15px;
-            line-height: 19px;
-            max-height:26px;
+            overflow: hidden;
+            padding:15px 10px;
             max-width:280px;
             min-height:13px;
-            overflow: hidden;
-            padding: 0px 12px;
+            max-height:26px;
+            color:#666666;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-size:13px;
+            border-left:1px solid #ECECEC;
 
             &.disabled {
-              color: $Amber1;
+              color: #AAA;
             }
 
             &.isNull {
-              color: $Amber1;
+              color: #AAA;
               font-style: italic;
             }
           }
 
           // Different column types
           div.number {
-            color:$Grey1;
+            color:#4DC964;
           }
 
           &.rowHeader:first-child {
@@ -439,7 +447,7 @@ div.table {
                 position:absolute;
                 top:15px;
                 left:10px;
-                @include border-radius(2px);
+                @include border-radius(3px);
                 background:#FAFAFA;
                 @include background(linear-gradient(#FAFAFA,#E8E8E8));
                 display:none;
@@ -489,11 +497,14 @@ div.table {
         }
 
         &:last-child {
-          border-bottom:1px solid Transparent;
+          border-bottom:1px solid #ECECEC;
         }
 
         &:hover {
-          background:$gridRowBackgroundHover;
+          background:#E8F9EC;
+          border-color:#CCCCCC;
+
+          & + tr {border-top-color:#CCCCCC;}
 
           div.row_header:before, div.row_header:after {
             display: block !important;
@@ -504,6 +515,9 @@ div.table {
 
     // Sync table
     &.synced {
+      tbody tr td div.cell {
+        color:rgba(#666666,.5);
+      }
       div.shadow {
         top:144px;
       }
@@ -520,7 +534,6 @@ div.table {
     // Loaders
     tfoot {
       padding:100px 0;
-      background: none;
 
       &.sql_loader {
 
@@ -544,10 +557,10 @@ div.table {
       }
 
       &.page_loader {
-        border:1px solid transparent;
+        border:1px solid #ECECEC;
         border-right:0;
         border-left:0;
-        background:none;
+        background:white;
         z-index:-1;
 
         th {
@@ -675,7 +688,7 @@ div.table {
 
 div.order_selector {
   position:absolute;
-  top:-1px;
+  top:-3px;
   right:0;
   a.asc {
     @include border-left-radius(2px);
@@ -687,13 +700,22 @@ div.order_selector {
   }
   a.asc, a.desc {
     @include inline-block();
-    @include bb_button_style;
     position:relative;
-    padding:0px 6px;
+    margin-top: 13px;
+    padding:0;
+    padding: (21px - 9px)/2 8px;
+    background-color: $button-bkg-color;
+    color: #397DB9;
     text-transform: uppercase;
+    font-weight: bold;
     font-size: 9px;
+    &:hover {
+      background-color: #397DB9;
+      color: $button-bkg-color;
+    }
     &.selected {
-      background-color: $btn_background_selected;
+      background-color: #397DB9;
+      color: $button-bkg-color;
       cursor: default;
     }
   }

@@ -47,9 +47,6 @@ FactoryGirl.define do
       crypted_password 'kkkkkkkkk'
     end
 
-    before(:create) do
-      CartoDB::UserModule::DBService.any_instance.stubs(:enable_remote_db_user).returns(true)
-    end
   end
 
   factory :carto_user, class: Carto::User do

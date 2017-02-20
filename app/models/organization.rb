@@ -67,14 +67,8 @@ class Organization < Sequel::Model
   end
 
   def validate_for_signup(errors, quota_in_bytes)
-    if remaining_seats <= 0
-      errors.add(:organization, "not enough seats")
-      CartoDB::Logger.log('CRITICAL_ERROR', message: "not enough seats in the organization")
-    end
-    if unassigned_quota <= 0 || (!quota_in_bytes.nil? && unassigned_quota < quota_in_bytes)
-      errors.add(:quota_in_bytes, "not enough disk quota")
-      CartoDB::Logger.log('CRITICAL_ERROR', message: "not enough disk quota in the organization")
-    end
+    errors.add(:organization, "not enough seats") if remaining_seats <= 0
+    errors.add(:quota_in_bytes, "not enough disk quota") if unassigned_quota <= 0 || (!quota_in_bytes.nil? && unassigned_quota < quota_in_bytes)
   end
 
   def before_validation

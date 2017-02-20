@@ -47,7 +47,6 @@ $width: 443px;
 .EditVisMetadata-formFooter {
   width: $width;
   margin: 0 auto;
-  text-align: right;
 }
 .EditVisMetadata-formContent {
   position: relative;
@@ -63,7 +62,6 @@ $width: 443px;
   left: 0;
   z-index: 10;
 }
-.EditVisMetadata-formFooter > .Button {
-  margin-right: 0px;
+.EditVisMetadata-formFooter .Button {
+  margin: 0;
 }
-

@@ -13,7 +13,7 @@
   @import "compass/css3/images";
   @import "../../../table/table-sprite";
   @import "../../../old_common/mixins";
-  @import "../../../variables/colors";
+
   
   
   .layer-views {
@@ -31,7 +31,7 @@
       color:white;
       text-align:center;
       @include border-radius(20px);
-      background:$Grey7;
+      background:#E5E5E5;
       border:none;
       &:hover {
         text-decoration:none;
@@ -48,16 +48,15 @@
     // - Redo
     // - Apply
     // - ...etc
-    // bb_actions
     div.actions {
       position:absolute;
       bottom:0;
-      left:37px;
+      left:0;
       right:0;
-      padding:0 5px 0 5px;
+      padding:20px 20px 20px 56px;
       display:block;
       height:38px;
-      border-top:1px solid $DarkGrey6;
+      border-top:1px solid rgba(#999999,0.25);
       z-index:1;
 
       a.next, a.back {
@@ -125,9 +124,11 @@
       left:0;
       max-height:30%;
       padding:17px 17px 17px 52px;
-      background:$White;
+      background:#FFF7E0;
       color:#888;
       z-index:2;
+      font-size:13px;
+      border-top:1px solid #EBDCE0;
       letter-spacing:0;
 
       p {
@@ -151,7 +152,7 @@
         padding:0;
         z-index:1001; // Filter shadow forces me to do it :S
 
-        p { padding:12px}
+        p { padding:20px 30px }
 
         &.editor {
           bottom:79px;

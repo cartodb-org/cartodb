@@ -12,7 +12,7 @@
 
         <% if cartodb_com_hosted? %>
           <li class="Header-navigationItem u-hideOnTablet">
-            <a href="<%= CartoDB.url(self, 'root') %>" class="Header-navigationLink">Bloomberg Maps</a>
+            <a href="<%= CartoDB.url(self, 'root') %>" class="Header-navigationLink">CartoDB</a>
           </li>
         <% else %>
           <li class="Header-navigationItem js-user-tour u-hideOnTablet">
@@ -39,7 +39,6 @@
     </div>
 
     <div class="Header-settings">
-      <% if !current_user || current_user.has_feature_flag?('bbg_profile_menu') %>
       <ul class="Header-settingsList js-user-settings">
         <li class="Header-settingsItem js-login">
           <a href="<%= login_url %>" class="Header-settingsLink">Login</a>
@@ -53,7 +52,6 @@
           </li>
         <% end %>
       </ul>
-      <% end %>
     </div>
   </div>
 </div>

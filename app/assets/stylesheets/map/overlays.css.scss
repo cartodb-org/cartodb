@@ -9,7 +9,6 @@
 @import "../old_common/mixins";
 @import "../map/map-sprite";
 @import "../old_elements/elements-sprite";
-@import "../variables/colors";
 
 /* Mobile */
 .cartodb-mobile .aside {
@@ -28,7 +27,7 @@
 }
 .cartodb-mobile .cartodb-attribution {
   max-width: 150px;
-  font:11px/1;
+  font:11px/1 "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 .cartodb-mobile .aside .layer-container .layers .cartodb-mobile-layer h3 {
@@ -55,10 +54,10 @@
 }
 
 .overlay-properties ul li .field.double-field .btn:first-child {
-  @include border-radius(2px 0 0 2px);
+  @include border-radius(3px 0 0 3px);
 }
 .overlay-properties ul li .field.double-field .btn:last-child {
-  @include border-radius(0 2px 2px 0);
+  @include border-radius(0 3px 3px 0);
   border-left: none;
 }
 
@@ -68,25 +67,25 @@
   float: left;
   min-width: 25px;
   width: auto;
-  height: 19px;
+  height: 20px;
   margin: 0;
-  border: 1px solid $Black;
-  @include border-radius(2px);
-  background-color: $btn_background_normal;
+  border: 1px solid #9E9E9E;
+  @include border-radius(3px);
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #f2f2f2));
+  background: -webkit-linear-gradient(#ffffff,#f2f2f2);
+  background: -moz-linear-gradient(#ffffff,#f2f2f2);
+  background: -o-linear-gradient(#ffffff,#f2f2f2);
+  background: linear-gradient(#ffffff,#f2f2f2);
 
   &:hover {
-   background-color: $btn_background_hover;
-  }
-
-  &:active {
-   background-color: $btn_background_press;
+   @include background(linear-gradient(#F3F3F3, #FFF));
   }
 
   &:after {
     content: '';
     position: absolute;
     left: 8px;
-    top: 4px;
+    top: 6px;
     display: block;
     width: 10px;
     height: 9px;
@@ -197,18 +196,16 @@
 .overlay-properties {
   position: absolute;
   top: 100px;
-  left: 12px;
+  left: 35px;
   width: 1250px;
 }
 .overlay-properties ul {
-  margin-top: 3px;
-  padding-left: 0px;
-  float: left;
+  margin: 3px 0 0 0;
 }
 .overlay-properties ul li {
   @include inline-block();
-  padding-right: 12px;
-  border-right: 1px solid $Black;
+  padding: 0 10px;
+  border-right: 1px solid rgba(217,217,217,0.8);
 }
 .overlay-properties ul li:last-child {
   border-right: none;
@@ -223,7 +220,7 @@
   margin: 0 8px 0 0;
 }
 .overlay-properties ul li .field .form-view:hover span {
-  
+  color: #333;
 }
 .overlay-properties ul li .field .form-view:last-child {
   margin-right: 0;
@@ -233,8 +230,10 @@
 }
 .overlay-properties ul li > span {
   margin: 0 0 5px 0;
-  color: $Grey1;
+  font-size: 13px;
+  color: white;
   display:block;
+  font-family: "Helvetica", Arial;
   font-weight:normal;
   line-height:12px;
 }
@@ -273,7 +272,7 @@
 
     a {
       color: inherit;
-      text-decoration: none;
+      text-decoration: underline;
       &:hover { color: #ccc; }
     }
 
@@ -292,7 +291,7 @@
   position: absolute!important; // !important required to work on IE10.
   background:rgba(#333, .5);
 
-  @include border-radius(2px);
+  @include border-radius(3px);
   @include simple-transition(background, .10s, ease-in-out);
 
   max-width: 800px;
@@ -376,7 +375,7 @@
 
     .content {
       position:relative;
-      @include border-radius(2px);
+      @include border-radius(3px);
     }
 
     &.error .loader {
@@ -510,7 +509,8 @@
     color: #fff;
     border: 1px solid #fff;
     background: #333;
-    font-size: 10px;    
+    font-size: 10px;
+    font-family: "helvetica neue", "helvetica", arial;
     text-align: center;
     text-transform: uppercase;
 
@@ -519,16 +519,13 @@
 
   }
 
-//overlay close button
-
   .close {
     top: -12px;
-    right: -15px;
+    left: -15px;
     height: 16px;
     width: 17px;
     padding: 3px;
-    line-height: 10px;
-    font-size: 8px;
+    line-height: 16px;
 
     @include border-radius(90px);
 
@@ -594,7 +591,7 @@
 
     em, i { font-style: italic; }
     strong { font-weight: bold; }
-    a { color: inherit; text-decoration: none; }
+    a { color: inherit; text-decoration: underline; }
 
      @include user-select(none); this breaks safari edition
 
@@ -625,38 +622,26 @@
 div.cartodb-timeslider {
   z-index: 1000000;
 }
-// zoom level
+
 div.cartodb-zoom .info {
   position:absolute;
   display:block;
   margin:17px 0 0 0;
   width: 28px;
   padding: 8px 0 7px 0;
+  font:normal 13px "Helvetica",Arial;
   line-height: normal;
-  color:$White;
+  color:#858585;
   text-align: center;
-  @include border-radius(2px);
-  border: 1px solid $Black;
-  background-color: $btn_background_normal;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+  @include border-radius(4px);
+  border: 1px solid #999999;
+  background: white;
+
   z-index: 5;
-  cursor: default;
-}
 
-div.cartodb-zoom { 
-    border: 1px solid $Black;
-    box-shadow: none;
-
-  a.zoom_in, a.zoom_out {
-    background-color: $btn_background_normal;
-    color: $White;
-  }
-  a.zoom_in {
-    border-radius: 2px 2px 0px 0px;
-    border-bottom: 1px solid $Black;
-  }
-  a.zoom_out {
-    border-radius: 0px 0px 2px 2px;
-  }
 }
 
 .leaflet-control-minimap {
@@ -790,7 +775,9 @@ div.dropdown.properties_dropdown {
       }
 
       &:hover { background: #fff; }
+
     }
+
   }
 
 } // .properties_dropdown

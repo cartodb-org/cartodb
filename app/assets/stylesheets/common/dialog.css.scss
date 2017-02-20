@@ -15,7 +15,14 @@ body.is-inDialog {
   width: 100%;
   height: 100%;
   z-index: 50;
-  background-color: $DarkGrey6;
+  background: rgba(white,1);
+  background: -moz-linear-gradient(top, rgba(white,1) 0%, rgba(white,0.95) 50%, rgba(white,0.9) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(white,1)), color-stop(50%, rgba(white,0.95)), color-stop(100%, rgba(white,0.9)));
+  background: -webkit-linear-gradient(top, rgba(white,1) 0%, rgba(white,0.95) 50%, rgba(white,0.9) 100%);
+  background: -o-linear-gradient(top, rgba(white,1) 0%, rgba(white,0.95) 50%, rgba(white,0.9) 100%);
+  background: -ms-linear-gradient(top, rgba(white,1) 0%, rgba(white,0.95) 50%, rgba(white,0.9) 100%);
+  background: linear-gradient(to bottom, rgba(white,1) 0%, rgba(white,0.95) 50%, rgba(white,0.9) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1 );
 }
 .Dialog-contentWrapper { // this is necessary since the Dialog element might have `position: block` set by .hide/.show
   @include display-flex();
@@ -64,7 +71,7 @@ body.is-inDialog {
   // if not IE10 will not show
   // scrollbar in higher content
   -ms-flex: 100 0 80%;
-  width: 100%;
+  background-color: $cStructure-grayBkg;
 }
 .Dialog-footer--expanded {
   width: 100%;
@@ -76,12 +83,12 @@ body.is-inDialog {
 }
 .Dialog-header {
   text-align: center;
-  padding-top: 12px;
+  padding: $sMargin-group 0;
 }
 .Dialog-body {
   padding-top: $sMargin-group;
   padding-bottom: $sMargin-group;
-  border-top: 1px solid $Black;
+  border-top: 1px solid $cStructure-mainLine;
   width: $sLayout-width;
   margin: 0 auto;
 }
@@ -124,8 +131,10 @@ body.is-inDialog {
   position: relative;
   background: none;
 }
-.Dialog-footer {  
+.Dialog-footer {
+  padding: $sMargin-group 0;
   text-align: center;
+  border-top: 1px solid $cStructure-mainLine;
 }
 .Dialog-footer--withoutBorder { border-top: none }
 .Dialog-footer--simple {
@@ -143,7 +152,7 @@ body.is-inDialog {
   position: fixed;
   bottom: 100px; // to be located on top of the .Dialog-footer
   left: 0;
-  background: $Grey6;
+  background: $cStructure-grayBkg;
   z-index: 3;
   // Make the item not go all the way to the edge, since that would cover the scrollbar…
   // Make margins on both sides to accomodate this
@@ -159,6 +168,7 @@ body.is-inDialog {
     display: block;
     width: 100%;
     height: 18px;
+    @include background-gradient(rgba(#F9F9F9, 0), rgba(#F9F9F9, 1));
     z-index: 2;
   }
 }
@@ -177,7 +187,7 @@ body.is-inDialog {
 .Dialog-headerIcon--neutral {
   // TODO: !important to not be overrided by .CreateDialog-headerIcon overriding stuff over here :(
   border-color: $cIcons-active !important;
-  .iconFont {
+  .CDB-IconFont {
     color: $cIcons-active !important;
   }
 }
@@ -268,12 +278,6 @@ $sStickyHeight: 97px;
 .Dialog-bodyInnerExpandedWithSubFooter { padding-bottom: $sStickyHeight }
 .Dialog-bodyInnerExpandedWithPreFooter { padding-bottom: $sStickyHeight + 100px }
 
-.Dialog-stickyFooter {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: $sStickyHeight;
-}
 .Dialog-contentSubHeader {
   @include display-flex();
   @include justify-content(space-between, justify);
@@ -310,52 +314,51 @@ $sNarrower-width: 620px;
 @include keyframes(fade-and-scale-in) {
   0% {
     @include opacity(0.0);
-    @include transforms(scale(2.0));
+    @include transform(scale(2.0));
   }
   10% {
     @include opacity(0.9);
-    @include transforms(scale(1.1));
+    @include transform(scale(1.1));
   }
   100% {
     @include opacity(1.0);
-    @include transforms(scale(1.0));
+    @include transform(scale(1.0));
   }
 }
 
 @include keyframes(fade-and-bounce-up) {
   0% {
     @include opacity(0.0);
-    @include transforms(translateY(6px));
+    @include transform(translateY(6px));
   }
   15% {
     @include opacity(0.8);
-    @include transforms(translateY(-3px)); 
+    @include transform(translateY(-3px));
   }
   45% {
     @include opacity(1.0);
-    @include transforms(translateY(2px));
+    @include transform(translateY(2px));
   }
   70% {
-    @include transforms(translateY(-1px));
+    @include transform(translateY(-1px));
   }
   100% {
     @include opacity(1.0);
-    @include transforms(translateY(0));
+    @include transform(translateY(0));
   }
 }
 
 @include keyframes(fade-and-scale-out) {
   0% {
     @include opacity(1.0);
-    @include transforms(scale(1.0));
+    @include transform(scale(1.0));
   }
   80% {
     @include opacity(0.05);
-    @include transforms(scale(1.40));
+    @include transform(scale(1.40));
   }
   100% {
     @include opacity(0.0);
-    @include transforms(scale(2.0));
+    @include transform(scale(2.0));
   }
 }
-

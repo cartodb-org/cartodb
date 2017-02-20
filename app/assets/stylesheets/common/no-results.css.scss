@@ -4,10 +4,7 @@
 .NoResults {
   font-size: $sFontSize-normal;
   line-height: $sLineHeight-normal;
-  color: $Grey7;
-  &:hover { 
-	color: $Grey7;
-	text-decoration: none; 
-	}
+  color: $cTypography-help;
+  font-style: italic;
+  &:hover { text-decoration: none }
 }
- 

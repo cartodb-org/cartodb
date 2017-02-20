@@ -2,24 +2,21 @@
 @import "../../variables/colors";
 @import "../../variables/sizes";
 
-.BreadcrumbsDropdown { 
-  width: 126px; 
-  > .BreadcrumbsDropdown-list {
-    display: block;
-    width: 100%;
-    margin: 0;
-  }
-}
+.BreadcrumbsDropdown { width: 260px }
 .BreadcrumbsDropdown--compact { width: 120px }
-
+.BreadcrumbsDropdown-list {
+  display: block;
+  width: 100%;
+  margin: 0!important;
+}
 .BreadcrumbsDropdown-listItem {
-  display: block;  
-
+  display: block;
+  margin-top: 0!important;
+  padding: $sMargin-element !important;
 }
 .BreadcrumbsDropdown-listItem.is-dark {
-  border-top: 1px solid $Black;
-  padding-top: 6px;
-  margin-top: 6px;
+  background: $cStructure-grayBkg;
+  border-radius: 0 0 2px 2px;
 }
 .BreadcrumbsDropdown-icon,
 .BreadcrumbsDropdown-options {
@@ -31,24 +28,18 @@
   margin-right: $sMargin-elementInline;
   width: 20px;
 }
-
+.BreadcrumbsDropdown-options {}
 .BreadcrumbsDropdown-optionsItem {
   display: block;
-  font-size: 13px;
-  color: $Amber1;
-  padding: 0px 12px;
-  width: 124px;
-  &:hover {
-    background:$DarkGrey2; 
-    color: $Amber1;
-    cursor: default;
-  }
+  font-size: $sFontSize-large;
+  font-weight: $sFontWeight-normal;
 }
+.BreadcrumbsDropdown-optionsItem.has-margin { margin-top: 10px }
 .BreadcrumbsDropdown-optionsItem.is-selected {
-  background-color: $SelectionBlue4;
-  color: $White;
+  color: $cTypography-linkSelected;
   &:hover {
-    background-color: $SelectionBlue3;
+    text-decoration: none;
+    cursor: default;
   }
 }
 .BreadcrumbsDropdown-lockIcon {

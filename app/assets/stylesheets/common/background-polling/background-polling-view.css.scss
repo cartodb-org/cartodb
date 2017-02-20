@@ -4,17 +4,18 @@
 
 // Background importer styles
 
-$radius: 2px;
+$radius: 4px;
 
 .BackgroundPolling {   
   position: fixed;
   bottom: -255px;
   left: 20px;
   width: 420px;
+  box-shadow: 0 0 3px 3px rgba(black, 0.1);
+  background: white;
   @include opacity(0);
   border-radius: $radius;
-  background: $DarkGrey8;
-  border: 1px solid $Black;
+  border: 1px solid #CCC;
   @include transition(all, 300ms);
   z-index: 10;
 }
@@ -28,6 +29,10 @@ $radius: 2px;
   @include align-items(center, center);
   height: 65px;
   padding: 0 20px;
+  background: $cStructure-grayBkg;
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+  border-bottom: 1px solid $cStructure-mainLine;
 }
 .BackgroundPolling-headerTitle {
   width: 220px;
@@ -75,51 +80,51 @@ $radius: 2px;
 @include keyframes(fade-and-scale-in) {
   0% {
     @include opacity(0.0);
-    @include transforms(scale(2.0));
+    @include transform(scale(2.0));
   }
   10% {
     @include opacity(0.9);
-    @include transforms(scale(1.1));
-  } 
-  100% { 
+    @include transform(scale(1.1));
+  }
+  100% {
     @include opacity(1.0);
-    @include transforms(scale(1.0));
+    @include transform(scale(1.0));
   }
 }
 
 @include keyframes(fade-and-bounce-up) {
   0% {
     @include opacity(0.0);
-    @include transforms(translateY(6px));
+    @include transform(translateY(6px));
   }
   15% {
     @include opacity(0.8);
-    @include transforms(translateY(-3px));
+    @include transform(translateY(-3px));
   }
   45% {
     @include opacity(1.0);
-    @include transforms(translateY(2px));
+    @include transform(translateY(2px));
   }
   70% {
-    @include transforms(translateY(-1px));
+    @include transform(translateY(-1px));
   }
   100% {
     @include opacity(1.0);
-    @include transforms(translateY(0));
+    @include transform(translateY(0));
   }
 }
 
 @include keyframes(fade-and-scale-out) {
   0% {
     @include opacity(1.0);
-    @include transforms(scale(1.0));
+    @include transform(scale(1.0));
   }
   80% {
     @include opacity(0.05);
-    @include transforms(scale(1.40));
+    @include transform(scale(1.40));
   }
   100% {
     @include opacity(0.0);
-    @include transforms(scale(2.0));
+    @include transform(scale(2.0));
   }
 }

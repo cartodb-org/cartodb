@@ -36,7 +36,7 @@
   color: $cTypography-link;
   &:hover {
     color: $cTypography-linkHover;
-    text-decoration: none;
+    text-decoration: underline;
   }
 }
 .Pagination-listItemInner--more {

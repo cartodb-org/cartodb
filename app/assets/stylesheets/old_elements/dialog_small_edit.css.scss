@@ -2,7 +2,6 @@
 @import "compass/css3/box-sizing";
 @import "../old_common/vars";
 @import "../old_common/form-elements";
-@import "../variables/mixins";
 
 .floating.edit_name_dialog.markdown {
 
@@ -78,7 +77,7 @@
   a.cancel {
     margin-top: 13px;
     font-size: 13px;
-    text-decoration: none;
+    text-decoration: underline;
     text-transform: lowercase;
   }
 
@@ -90,7 +89,7 @@
   a.link {
     margin-top: 19px;
     font-size: 13px;
-    text-decoration: none;
+    text-decoration: underline;
     text-transform: lowercase;
     margin-right: 3px;
   }
@@ -295,15 +294,49 @@
 .floating.edit_name_dialog {
   z-index:10000;
   min-width:280px;
-  height:30px;  
+  height:37px;
+  padding: 5px;
+  @include background(linear-gradient(rgba(black, 0.5), rgba(#212121,0.5)));
+  @include border-radius(4px);
+  @include box-shadow(rgba(0,0,0,0.12) 0 0 2px 2px);
 
   .content {
     float: left;
     @include inline-block();
   }
 
+  input {
+    position:absolute;
+    top:5px;
+    left:5px;
+    right:65px;
+    bottom:5px;
+    font-size: 15px;
+    color: #333333;
+    border: 1px solid #000;
+    padding: 8px 10px;
+    line-height:normal;
+    @include border-radius(4px);
+    margin: 0 3px 0 0;
+    &:focus {
+      outline:none;
+    }
+  }
+
   a.ok {
-    @include bb_button_style;
+    padding: 9px 15px !important;
+    border: 1px solid #000 !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+    letter-spacing:0;
+    @include border-radius(4px);
+
+    &:active {
+      border-color:#ACACAC;
+      background:#D3D3D3; // IE
+      @include background(linear-gradient(#F9F9F9,#E1E1E1));
+      @include box-shadow(rgba(255,255,255,0) 0 0 1px 0,rgba(130,126,111,0.6) 0 1px 3px 0 inset);
+    }
   }
 
   &.tags-dialog {
@@ -323,11 +356,11 @@
       @include border-radius(4px);
 
       li.tagit-choice {
-        margin:0 2px 2px 0;
+        margin:0 3px 3px 0;
         padding:0;
         background:#4086C3;
         border:1px solid #2B5B85;
-        @include border-radius(2px);
+        @include border-radius(3px);
         font:normal 11px "Arial";
         color:#FFFFFF;
 
