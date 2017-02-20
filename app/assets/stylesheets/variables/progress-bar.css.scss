@@ -23,11 +23,9 @@
       width:100%;
       height: $h;
       border-radius: $r;
-      background: #F5F5F5;
+      background: $Black;
       overflow:hidden;
       box-shadow: inset 0 1px 0 0 rgba(black, .1);
-
-      &.overflow-visible { overflow: visible; }
 
       .bar-3,
       .bar-2,
@@ -48,7 +46,6 @@
       .bar-3 {
         background: #7DD4FF;
         z-index:3;
-        border-right: 1px solid #FFF;
       }
 
       // Blue light
@@ -59,7 +56,7 @@
 
       // Grey light
       .bar-1 {
-        background:#E5E5E5;
+        background:$Black;
         z-index:1;
         &:after { display:none }
         &:before {

@@ -211,7 +211,11 @@ module CartoDB
 
       def drop(table_name)
         Carto::OverviewsService.new(database).delete_overviews table_name
-        database.execute(%(DROP TABLE #{table_name}))
+        if runner.instance_of? CartoDB::Importer2::CDBDataLibraryConnector
+            database.execute(%(DROP VIEW #{table_name}))
+        else
+            database.execute(%(DROP TABLE #{table_name}))
+        end
       rescue => exception
         runner.log.append("Couldn't drop table #{table_name}: #{exception}. Backtrace: #{exception.backtrace} ")
         self

@@ -1,6 +1,6 @@
 // cartodb.js version: 3.15.9
 // uncompressed version: cartodb.uncompressed.js
-// sha: 1ee7c836065040ca033c2d18c64b865c176b935f
+// sha: 22abea44dc35b3cfe1e4aadb9295a5b2fb916f90
 (function() {
   var define;  // Undefine define (require.js), see https://github.com/CartoDB/cartodb.js/issues/543
   var root = this;
@@ -26322,7 +26322,7 @@ if(!window.JSON) {
 
     cdb.config = new Config();
     cdb.config.set({
-      cartodb_attributions: "CartoDB <a href=\"http://cartodb.com/attributions\" target=\"_blank\">attribution</a>",
+      cartodb_attributions: "",
       cartodb_logo_link: "http://www.cartodb.com"
     });
 
@@ -27293,6 +27293,66 @@ cdb.geo.geocoder.NOKIA = {
       });
   }
 }
+
+cdb.geo.geocoder.BING = {
+
+  keys: {
+    api_key:   "AjpDgTq-h1SPLZfoD8fxeLqWRlQ8JqoM17ZwiNN27jOn82uddopEz04yR_nlNhh4",
+  },
+
+  geocode: function(address, callback) {
+    address = address.toLowerCase()
+      .replace(/é/g,'e')
+      .replace(/á/g,'a')
+      .replace(/í/g,'i')
+      .replace(/ó/g,'o')
+      .replace(/ú/g,'u');
+
+      var protocol = '';
+      if(location.protocol.indexOf('https') === -1) {
+        protocol = 'https:';
+      }
+      $.ajax({
+          url: protocol + '//dev.virtualearth.net/REST/v1/Locations?q=' + encodeURIComponent(address) + '&maxResults=1' + '&key=' + this.keys.api_key,
+          dataType: 'jsonp',
+          jsonp: "jsonp",
+          success: function(data){
+            var coordinates = [];
+            if (data && data.resourceSets[0].resources) {
+            
+              var res = data.resourceSets[0].resources;
+
+              for(var i in res) {
+                var r=res[i],position;
+
+                if(r.point){
+                  position = {
+                    lat: r.point.coordinates[0],
+                    lon: r.point.coordinates[1]
+                  };
+                }
+
+                if (r.bbox) {
+                  position.boundingbox = {
+                    north: r.bbox[2],
+                    south: r.bbox[0],
+                    east: r.bbox[3],
+                    west: r.bbox[1]
+                  }
+                }
+                
+                coordinates.push(position);
+            }
+          }
+          if (callback) {
+            callback.call(this, coordinates);
+        }
+        }
+      }
+    );
+  }
+}
+
 
 
 /**
@@ -30518,25 +30578,26 @@ cdb.geo.ui.InfowindowModel = Backbone.Model.extend({
   sortFields: function() {
     this.get('fields').sort(function(a, b) { return a.position - b.position; });
   },
-  _addField: function(fieldName, at, alias) {
+
+  _addField: function(fieldName, at) {
     var dfd = $.Deferred();
     if(!this.containsField(fieldName)) {
       var fields = this.get('fields');
       if(fields) {
         at = at === undefined ? fields.length: at;
-        fields.push({ name: fieldName, title: true, position: at, alias: alias });
+        fields.push({ name: fieldName, title: true, position: at });
       } else {
         at = at === undefined ? 0 : at;
-        this.set('fields', [{ name: fieldName, title: true, position: at, alias: alias }], { silent: true});
+        this.set('fields', [{ name: fieldName, title: true, position: at }], { silent: true});
       }
     }
     dfd.resolve();
     return dfd.promise();
   },
 
-  addField: function(fieldName, at, alias) {
+  addField: function(fieldName, at) {
     var self = this;
-    $.when(this._addField(fieldName, at, alias)).then(function() {
+    $.when(this._addField(fieldName, at)).then(function() {
       self.sortFields();
       self.trigger('change:fields');
       self.trigger('add:fields');
@@ -30593,14 +30654,8 @@ cdb.geo.ui.InfowindowModel = Backbone.Model.extend({
     return _.contains(_(fields).pluck('name'), fieldName);
   },
 
-  containsAlias: function(aliasName) {
-    var fields = this.get('fields') || [];
-    return _.contains(_(fields).pluck('alias'), aliasName);
-  },
-  
-
   removeField: function(fieldName) {
-    if(this.containsField(fieldName) || this.containsAlias(fieldName)) {
+    if(this.containsField(fieldName)) {
       var fields = this._cloneFields() || [];
       var idx = _.indexOf(_(fields).pluck('name'), fieldName);
       if(idx >= 0) {
@@ -30636,7 +30691,6 @@ cdb.geo.ui.InfowindowModel = Backbone.Model.extend({
         render_fields.push({
           title: field.title ? field.name : null,
           value: attributes[field.name],
-          alias: field.alias ? field.alias : null,
           index: j
         });
       }
@@ -30891,13 +30945,11 @@ cdb.geo.ui.Infowindow = cdb.core.View.extend({
     }
 
     //Get the alternative title
-    var title = (attr.alias) ? attr.alias : attr.title;
-    var alternative_name = this.model.getAlternativeName(title);
+    var alternative_name = this.model.getAlternativeName(attr.title);
 
     if (attr.title && alternative_name) {
       // Alternative title
       attr.title = alternative_name;
-      attr.alias = null;
     } else if (attr.title) {
       // Remove '_' character from titles
       attr.title = attr.title.replace(/_/g,' ');
@@ -31552,7 +31604,7 @@ cdb.geo.ui.Search = cdb.core.View.extend({
     this._showLoader();
     // Remove previous pin
     this._destroySearchPin();
-    cdb.geo.geocoder.NOKIA.geocode(address, function(places) {
+    cdb.geo.geocoder.BING.geocode(address, function(places) {
       self._onResult(places);
       // Hide loader
       self._hideLoader();

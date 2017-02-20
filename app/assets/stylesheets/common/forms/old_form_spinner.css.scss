@@ -13,86 +13,89 @@
 */
 
 .form_spinner {
+  @include bb_entry_style;
   position:relative;
   display: inline-block;
   min-width:20px;
   width:auto;
-  padding:2px 19px 2px 4px;
-  line-height: 20px;
+  padding:0px 19px 0px 4px;
   margin:0;
-  border:1px solid #9E9E9E;
-  border-radius: 3px;
-  background: white;
-
-
-  &:hover { cursor: pointer }
-
-  &:hover, .input:hover {
-    border: 1px solid #7E7E7E;
+  > input {
+    border: none;
+    padding: 0px;
   }
 
-  &:hover input.value { color: #333 }
+  &.with-label {
+      margin: 0;
+      padding: 0;
+      height: auto;
+      border: none;
+      background: none;
 
-  input.value {
-    float:none;
-    margin:0;
-    padding:0;
-    width:25px;
-    text-align:left;
-    line-height:15px;
-    font-size:13px;
-    color:#666666;
-    background: none;
-    border:none;
-    &:focus {
-      outline:none;
-      color:#333333;
+      .label {
+        margin: 0 4px 0 0;
+        font-size: 11px;
+        color: $Grey2;
+        cursor: default;
+      }
+
+      .input {
+        position:relative;
+        @include inline-block();
+        min-width:20px;
+        width:auto!important;
+        padding:0px 19px 0px 4px;
+        height:19px;
+        margin:0;
+        border:1px solid $Black;
+        background-color: $Amber1;
+        > .value {
+          border: none;
+        }
+      }
+
     }
-  }
+
+
 
   a {
+    @include bb_button_style;
+    border-radius: 0px;
+    border: none;
     position:absolute;
     right:0;
     width:14px;
-    height:11px;
-    border-left:1px solid #A8A8A8;
-    text-indent: -9999px;
+    height:9px;
+    color: transparent;
+    &:hover {
+      color: transparent;
+    }
+
 
     &:before {
       content:' ';
       position:absolute;
-      left:5px;
+      left:4px;
       width:0;
       height:0;
-      border-left:2px solid transparent;
-      border-right:2px solid transparent;
+      border-left:3px solid transparent;
+      border-right:3px solid transparent;
     }
 
     &.plus {
       top:0;
-      border-bottom:1px solid #A8A8A8;
+      height: 10px;
       &:before {
-        top: 4px;
-        border-bottom:3px solid #999;
+        top: 2px;
+        border-bottom:4px solid $Grey2;
       }
     }
     
     &.minus {
       bottom:0;
-      height: 12px;
       &:before {
-        top: 5px;
-        border-top:3px solid #999;
-      }
-    }
-
-    &:hover {
-      &.plus {
-        &:before {border-bottom:3px solid #666;}
-      }
-      &.minus {
-        bottom:0;
-        &:before {border-top:3px solid #666;}
+        top: 3px;
+        border-top:4px solid $Grey2;
       }
     }
   }

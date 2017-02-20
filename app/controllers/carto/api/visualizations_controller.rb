@@ -17,7 +17,7 @@ module Carto
       include VisualizationsControllerHelper
 
       ssl_required :index, :show
-      ssl_allowed  :vizjson2, :vizjson3, :likes_count, :likes_list, :is_liked, :list_watching, :static_map
+      ssl_allowed  :vizjson2, :vizjson3, :likes_count, :likes_list, :is_liked, :list_watching, :static_map, :search
 
       # TODO: compare with older, there seems to be more optional authentication endpoints
       skip_before_filter :api_authorization_required, only: [:index, :vizjson2, :vizjson3, :is_liked, :static_map]
@@ -41,40 +41,54 @@ module Carto
         page, per_page, order = page_per_page_order_params
         types, total_types = get_types_parameters
         vqb = query_builder_with_filter_from_hash(params)
+        hideSharedEmptyDataset = false
+        emptyDatasetName = ''
+        if current_user && !current_user.has_feature_flag?('bbg_disabled_shared_empty_dataset') then
+          emptyDatasetName = Cartodb.config[:shared_empty_dataset_name]
+          if current_user[:username] != Cartodb.config[:common_data]['username'] && params[:q] != emptyDatasetName then
+            hideSharedEmptyDataset = true
+          end
+        end
 
         presenter_cache = Carto::Api::PresenterCache.new
 
-        # TODO: undesirable table hardcoding, needed for disambiguation. Look for
-        # a better approach and/or move it to the query builder
-        response = {
-          visualizations: vqb.with_order("visualizations.#{order}", :desc).build_paged(page, per_page).map { |v|
-              VisualizationPresenter.new(v, current_viewer, self, { related: false }).with_presenter_cache(presenter_cache).to_poro
-          },
-          total_entries: vqb.build.count
-        }
-        if current_user
-          # query_builder_with_filter_from_hash builds the vis list using params, these do the same
-          # queries statically to provide counts in the header regardless of which tab is shown.
-          # Prefetching at counts removes duplicates
-          response.merge!({
-            total_user_entries: VisualizationQueryBuilder.new.with_types(total_types)
-                                                             .with_user_id(current_user.id)
-                                                             .build.count,
-            total_likes: VisualizationQueryBuilder.new.with_types(total_types)
-                                                      .with_liked_by_user_id(current_user.id)
-                                                      .build.count,
-            total_shared: VisualizationQueryBuilder.new.with_types(total_types)
-                                                       .with_shared_with_user_id(current_user.id)
-                                                       .with_user_id_not(current_user.id)
-                                                       .with_prefetch_table
-                                                       .build.count,
-            total_library: VisualizationQueryBuilder.new.with_type(Carto::Visualization::TYPE_REMOTE)
-                                                        .with_user_id(current_user.id)
-                                                        .without_synced_external_sources
-                                                        .without_imported_remote_visualizations
-                                                        .build.count
-          })
+        if hideSharedEmptyDataset then
+          # TODO: undesirable table hardcoding, needed for disambiguation. Look for
+          # a better approach and/or move it to the query builder
+          excludedNames = [emptyDatasetName]
+          response = {
+            visualizations: vqb.with_order("visualizations.#{order}", :desc).with_excluded_names(excludedNames).build_paged(page, per_page).map { |v|
+                VisualizationPresenter.new(v, current_viewer, self, { related: false }).with_presenter_cache(presenter_cache).to_poro
+            },
+            total_entries: vqb.build.count
+          }
+          if current_user
+            # Prefetching at counts removes duplicates
+            response.merge!({
+              total_user_entries: VisualizationQueryBuilder.new.with_types(total_types).with_user_id(current_user.id).with_excluded_names(excludedNames).build.count,
+              total_likes: VisualizationQueryBuilder.new.with_types(total_types).with_liked_by_user_id(current_user.id).with_excluded_names(excludedNames).build.count,
+              total_shared: VisualizationQueryBuilder.new.with_types(total_types).with_shared_with_user_id(current_user.id).with_user_id_not(current_user.id).with_prefetch_table.with_excluded_names(excludedNames).build.count
+            })
+          end
+        else
+          # TODO: undesirable table hardcoding, needed for disambiguation. Look for
+          # a better approach and/or move it to the query builder
+          response = {
+            visualizations: vqb.with_order("visualizations.#{order}", :desc).build_paged(page, per_page).map { |v|
+                VisualizationPresenter.new(v, current_viewer, self, { related: false }).with_presenter_cache(presenter_cache).to_poro
+            },
+            total_entries: vqb.build.count
+          }
+          if current_user
+            # Prefetching at counts removes duplicates
+            response.merge!({
+              total_user_entries: VisualizationQueryBuilder.new.with_types(total_types).with_user_id(current_user.id).build.count,
+              total_likes: VisualizationQueryBuilder.new.with_types(total_types).with_liked_by_user_id(current_user.id).build.count,
+              total_shared: VisualizationQueryBuilder.new.with_types(total_types).with_shared_with_user_id(current_user.id).with_user_id_not(current_user.id).with_prefetch_table.build.count
+            })
+          end
         end
+
         render_jsonp(response)
       rescue CartoDB::BoundingBoxError => e
         render_jsonp({ error: e.message }, 400)
@@ -134,6 +148,49 @@ module Carto
         response.headers['Cache-Control']   = "max-age=86400,must-revalidate, public"
 
         redirect_to Carto::StaticMapsURLHelper.new.url_for_static_map(request, @visualization, map_width, map_height)
+      end
+
+      def search
+        username = current_user.username
+        query = params[:q]
+        query.downcase!
+        queryLike = '%' + query + '%'
+        queryPrefix = query + ':*'
+        queryPrefix.tr!(' ', '+')
+
+        layers = Sequel::Model.db.fetch("
+            SELECT id, username, type, name, description, tags, (1.0 / (CASE WHEN pos_name = 0 THEN 10000 ELSE pos_name END) + 1.0 / (CASE WHEN pos_tags = 0 THEN 100000 ELSE pos_tags END)) AS rank FROM (
+              SELECT v.id, u.username, v.type, v.name, v.description, v.tags,
+                COALESCE(position(? in lower(v.name)), 0) AS pos_name,
+                COALESCE(position(? in lower(array_to_string(v.tags, ' '))), 0) * 1000 AS pos_tags
+              FROM visualizations AS v
+                  INNER JOIN users AS u ON u.id=v.user_id
+                  LEFT JOIN external_sources AS es ON es.visualization_id = v.id
+                  LEFT JOIN external_data_imports AS edi ON edi.external_source_id = es.id AND (SELECT state FROM data_imports WHERE id = edi.data_import_id) <> 'failure'
+              WHERE edi.id IS NULL AND v.user_id=(SELECT id FROM users WHERE username=?) AND v.type IN ('table', 'remote') AND
+              (
+                to_tsvector(coalesce(v.name, '')) @@ to_tsquery(?)
+                OR to_tsvector(array_to_string(v.tags, ' ')) @@ to_tsquery(?)
+                OR v.name ILIKE ?
+                OR array_to_string(v.tags, ' ') ILIKE ?
+              )
+            ) AS results
+            ORDER BY rank DESC, type DESC LIMIT 50",
+            query, query, username, queryPrefix, queryPrefix, queryLike, queryLike, query
+          ).all
+
+        if !current_user.has_feature_flag?('bbg_disabled_shared_empty_dataset') then
+          emptyDatasetName = Cartodb.config[:shared_empty_dataset_name]
+
+          layers.each_with_index do |layer, index|
+            if layer[:name] == emptyDatasetName then
+              layers.delete_at(index)
+              break
+            end
+          end
+        end
+
+        render :json => '{"visualizations":' + layers.to_json + ' ,"total_entries":' + layers.size.to_s + '}'
       end
 
       private

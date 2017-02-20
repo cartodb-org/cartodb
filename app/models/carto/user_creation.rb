@@ -184,6 +184,8 @@ class Carto::UserCreation < ActiveRecord::Base
   end
 
   def initialize_user
+    puts "user-auto-creation : inside initialize_use"
+
     @cartodb_user = ::User.new
     @cartodb_user.username = username
     @cartodb_user.email = email
@@ -204,6 +206,11 @@ class Carto::UserCreation < ActiveRecord::Base
     @cartodb_user.soft_geocoding_limit = soft_geocoding_limit unless soft_geocoding_limit.nil?
     @cartodb_user.soft_here_isolines_limit = soft_here_isolines_limit unless soft_here_isolines_limit.nil?
     @cartodb_user.soft_twitter_datasource_limit = soft_twitter_datasource_limit unless soft_twitter_datasource_limit.nil?
+
+    # Bloomberg specific information from user_infos
+    blp_user = ::UserInfo.where(username: username).first
+    puts  "user-auto-creation : initialize_user with #{blp_user.firstname} #{blp_user.lastname}"
+    @cartodb_user.name = "#{blp_user.firstname} #{blp_user.lastname}"
 
     @cartodb_user
   rescue => e

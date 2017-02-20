@@ -12,6 +12,8 @@
 @import "../old_common/mixins";
 @import "../map/map-sprite";
 @import "../old_elements/elements-sprite";
+@import "../variables/colors";
+@import "../variables/mixins";
 
 div.map {
   @include box-sizing(border-box);
@@ -88,6 +90,11 @@ div.map {
       @include border-radius(5);
       border: solid 1px #666;
     }
+  }
+  div.cartodb-legend.choropleth li.graph {
+    border: 1px solid $Black;
+    border-radius: 0;
+
   }
 
   &.table { // TABLE'S MAP
@@ -193,12 +200,15 @@ div.map {
     }
   }
 
+//bb_toolbar
+
   div.map_toolbar {
     @include position(0, false, false, 0px);
     @include size(100%, 66px);
-    @include box-shadow(rgba(black,0.15) 0 3px 3px 0);
-    background: image-url('layout/thead_bkg.jpg') repeat 0 0;
-
+    background-color: $DarkGrey8;
+    border-bottom: 1px solid $Black;
+    box-sizing: border-box;
+    padding: 3px 7px 4px;
     &.animated {
       overflow:hidden;
     }
@@ -212,31 +222,62 @@ div.map {
       top: 0;
       left: 0;
       @include inline-block();
+      padding-top:15px;
+      padding-left: 8px;
     }
   }
 
   .options {
     float: left;
     @include inline-block();
-    margin: 20px 0 0 45px;
 
     & > li.button {
-
-      &.add_overlay, &.toggle_slides, &.export_image {
+      
+      &.canvas_setup, &.add_overlay, &.toggle_slides, &.export_image {
 
         position:relative;
 
         & > .thumb {
           @include size(26px);
+          display: none; //remove_icons
         }
 
       }
 
-      &.add_overlay   > .thumb { @include map-sprite(add_element);  }
-      &.export_image  > .thumb { @include map-sprite(export_image); }
+      &.canvas_setup  > .thumb { @include map-sprite(setup_canvas); }
+      &.add_overlay {
+          position: relative;
+          padding-right: 18px;
+
+          > .thumb { @include map-sprite(add_element);  }
+          &:after {
+            content: "";
+            position: absolute;
+            border: 3px solid transparent;
+            border-top: 5px solid $Grey2;
+            right: 6px;
+            top: 18px;
+          }
+      }
+      &.export_image   {
+        padding-right: 8px;
+       > .thumb { @include map-sprite(export_image); }
+      }
+
       &.toggle_slides > .thumb { @include map-sprite(toggle_slides); }
       &.toggle_slides.active > .thumb { @include map-sprite(toggle_slides_active); }
 
+
+    }
+
+    .search-bar-container {
+      background: none !important;
+      padding: 0 6px 0 2px;
+    }
+
+    .search-bar-browse {
+      float: right;
+      text-transform: none;
     }
 
     & > li {
@@ -260,38 +301,39 @@ div.map {
 
         &:before {
           content:' ';
-          @include position(-3px, -9px, false, false);
-          margin:8px 0 0 5px;
+          @include position(-3px, -20px, false, false);
+          margin:16px 0 0 5px;
 
-          border-left:3px solid transparent;
-          border-right:3px solid transparent;
-          border-top:3px solid #7C7C7C;
+          border-left:4px solid transparent;
+          border-right:4px solid transparent;
+          border-top:5px solid $Grey1;
 
           z-index:1;
         }
 
         &:after {
           content:' ';
-          @include position(-1px, -9px, false, false);
-          margin:9px 0 0 5px;
+          @include position(-1px, -20px, false, false);
+          margin:16px 0 0 5px;
 
-          border-left:3px solid transparent;
-          border-right:3px solid transparent;
-          border-top:3px solid transparent;
+          border-left:4px solid transparent;
+          border-right:4px solid transparent;
+          border-top:5px solid $Grey1;
 
           z-index:0;
         }
 
       }
 
-      @include inline-block();
+      @include inline-block();      
+      @include bb_button_style;
+      height: 40px;
+      margin: 0 1px 0 0;
+      padding: 0px 12px 0px 6px;
+      cursor: default;
+      -webkit-user-select: none;
 
-      padding: 0 15px 0 0;
-      margin: 0 5px 0 0;
 
-      border-right: 1px solid rgba(#D9D9D9, .8);
-
-      cursor: pointer;
 
       & > .thumb {
         position:relative;
@@ -315,38 +357,39 @@ div.map {
           position:relative;
           padding:0 12px 0 0;
           display:block;
-          font-family: "Helvetica", Arial;
           font-weight:normal;
-          line-height:12px;
+          line-height:15px;
         }
       }
 
       .info {
         @include inline-block();
-        padding-top:2px;
+        line-height: 38px;
 
         h5, .name {
           font-size: 13px;
-          color: #7A7A7A;
+          color: $Grey1;
+        }
+
+        //bb remove second line
+        .name {
         }
 
         h5 {
           position:relative;
           padding:0 12px 0 0;
           display:block;
-          font-family: $text-fonts2;
-          font-weight:normal;
-          line-height:12px;
+          line-height:35px;
 
           &:before {
             position:absolute;
             content:' ';
-            top:-3px;
-            right:-9px;
-            margin:8px 0 0 5px;
-            border-left:3px solid transparent;
-            border-right:3px solid transparent;
-            border-top:3px solid #7C7C7C;
+            top:0px;
+            right:-5px;
+            margin:16px 0 0 5px;
+            border-left:4px solid transparent;
+            border-right:4px solid transparent;
+            border-top:5px solid $Grey1;
             z-index:1;
           }
 
@@ -354,16 +397,17 @@ div.map {
             position:absolute;
             content:' ';
             top:-1px;
-            right:-9px;
-            margin:9px 0 0 5px;
-            border-left:3px solid transparent;
-            border-right:3px solid transparent;
-            border-top:3px solid transparent;
+            right:-20px;
+            margin:16px 0 0 5px;
+            border-left:4px solid transparent;
+            border-right:4px solid transparent;
+            border-top:5px solid transparent;
             z-index:0;
           }
         }
 
       }
+
     }
   } // .dropdowns
 
@@ -377,14 +421,14 @@ div.map {
     position:relative;
     box-sizing: border-box;
     @include inline-block();
-    padding: 10px 14px 10px 37px;
+    @include bb_button_style;
+    padding: 5px 8px 6px 35px;
     margin: 0 3px 0 0;
     height: auto;
     min-width: 70px;
-    background: rgba(#000, .7);
     color: #fff;
     font-size: 13px;
-    @include border-radius(3px);
+
 
     &:last-child {
       margin-right: 0;
@@ -428,7 +472,7 @@ div.map {
     &:after {
       background-color: #fff;
       @include box-shadow(0 0 1px rgba(#000, .9));
-      @include border-radius(3px);
+      @include border-radius(2px);
     }
   }
 
@@ -447,20 +491,39 @@ div.map {
 
   &.derived div.cartodb-map {
 
-    @include position(15px, 79px, 15px, 15px);
-    @include border-radius(3px);
+    @include position(-1px, 0px, 0, 0);
     @include size(auto);
 
   }
 
   div.cartodb-map {
 
-    & > div.cartodb-searchbox{
+    & > div.cartodb-searchbox {
+      @include bb_entry_style;
+      width: 160px;
       top: 20px;
-      right: 77px;
+      right: 96px;
       float: right;
       position: absolute;
-    }
+
+      input {
+        width: 150px;
+        cursor: text;
+      }
+      input.text {
+        border:none;
+        color: $Black;
+        left: 6px;
+      }
+      input.submit {
+        background: none;
+      }
+      span.loader {
+        background: url(../images/loader.svg) no-repeat center;
+        margin-left: -30px;
+      }
+    } 
+
 
     z-index:1;
 
@@ -471,32 +534,20 @@ div.map {
     margin: 0;
 
     z-index: 10001;
-
+    background-color: $DarkGrey2;
+    border:1px solid Black;
+    cursor: default;
     div.cartodb-legend {
       display:none;
       @include position(false, 0, 0, false);
       position:relative;
       margin: 0;
-
-      &.custom, &.cluster, &.bubble, &.color, &.intensity, &.density {
-        display: block;
+      cursor: default;
+      ul li {
+        color: $Amber1;
       }
-
-      &.cluster, &.bubble, &.color, &.intensity, &.density {
-        width: 100% !important;
-      }
-
-      &.bubble {
-        padding-left: 0;
-        padding-right: 0;
-        .legend-title {
-          padding-left: 10px;
-        }
-        & > ul {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
-      }
+      &.custom, &.cluster, &.bubble, &.color, &.intensity, &.density { display: block; }
+      border-bottom: none;
     }
   }
 
@@ -532,6 +583,48 @@ div.map {
     display:none;
     font-weight: normal;
     margin: 0;
+    @include bb_button_style;
+    border: 1px solid $Black;
+
+  }
+  div.cartodb-dropdown.border {
+    background-color: #1d1d1d;
+    border: 1px solid $Grey2;
+  }
+
+  div.cartodb-layer-selector-box div.cartodb-dropdown ul li {
+    border: none;
+    &:hover { 
+      background: none;
+      a.layer {
+        text-decoration: none;
+      }
+    }
+  }
+
+  div.cartodb-layer-selector-box div.cartodb-dropdown ul li a.layer {
+    color: $Amber1;
+    border: none;
+
+  }
+  div.cartodb-dropdown div.tail span.border {
+    top: 0px;
+  }
+
+  div.cartodb-layer-selector-box a.layers .count, &:hover{
+    background: none;
+  }
+
+
+  div.cartodb-layer-selector-box div.cartodb-dropdown ul li a.switch {
+    border: none;
+    &.enabled {
+      background-color: $Amber1
+    }
+    span.handle {
+      border: none;
+      top: 1px;
+    }
   }
 
   // Zoom
@@ -551,6 +644,10 @@ div.map {
       top: 0;
       left: 0;
       margin:0;
+      background: url(../images/loader.svg) no-repeat center;
+      border-radius: 0px;
+      border:none;
+      box-shadow: none;
     }
   }
 
@@ -564,11 +661,19 @@ div.map {
     display:none;
     position:absolute;
     margin: 0;
+    a {
+      @include bb_button_style;
+      border: 1px solid $Black;
+    }
   }
 
   div.cartodb-share {
     margin: 0;
     position:absolute;
+     a {
+      @include bb_button_style;
+      border: 1px solid $Black;
+    }
   }
 
   // Search box in core map
@@ -590,7 +695,7 @@ div.map {
     border:1px solid #999999;
     @include box-shadow(rgba(0,0,0,0.1) 0 0 4px 3px);
     background:white;
-    @include border-radius(3px);
+    @include border-radius(2px);
     z-index: 1000;
 
     a {
@@ -631,32 +736,23 @@ div.map {
     width: 100%;
     height: 37px;
     margin: -18px 0 0 0;
+    top: 69px;
     z-index:1;
 
     p {
       position: fixed;
       left: 50%;
       display: inline;
-      margin: 0 0 0 -50%;
-      padding: 12px 0;
+      margin: -3px 0 0 -50%;
+      padding: 0px 12px;
       width: 100%;
-      border-bottom: 1px solid #ccc;
-      background-color: #E5FAEA;
-      color: #333;
-      color: #666666;
+      background-color: $Black;
       text-align: center;
-      font-size: 13px;
-      font-family: $text-fonts;
       text-indent:0;
       z-index:2;
       @include transform-style("linear");
       @include transition-property("text-indent");
       @include transition-duration(300ms);
-      @include box-shadow(rgba(0, 0, 0, 0.055) 0 3px 1px 0);
-
-      &.warn {
-        background-color: rgba(#FFFFBF, 0.90);
-      }
     }
   } //div.sqlview
 
@@ -675,8 +771,12 @@ div.map {
       div.cartodb-layer-selector-box,
       div.cartodb-legend-stack,
       div.cartodb-searchbox {
-        margin-right:520px;
+        margin-right:600px;
       }
+    }
+
+    &.map.derived .ExportHelper--legend.cartodb-legend-stack {
+      margin-right:0 !important;
     }
 
     &.map.derived.mobile .mobile_bkg:before {
@@ -702,9 +802,12 @@ div.map {
       div.cartodb-layer-selector-box,
       div.cartodb-legend-stack,
       div.cartodb-searchbox {
-        margin-right:375px;
+        margin-right:455px;
       }
+    }
 
+    &.narrow.map.derived .ExportHelper--legend.cartodb-legend-stack {
+      margin-right:0 !important;
     }
 
     // Table
@@ -798,7 +901,7 @@ div.cartodb-edit-buttons {
     height:24px;
     border-right:0;
     margin:0;
-    padding:0!important;
+    padding:0!important; 
     margin:0;
     text-indent: -9999px;
     font-size:0;
@@ -813,8 +916,8 @@ div.cartodb-edit-buttons {
     &.add_point {@include edit-bottom-states(-80, 7, #F9F9F9, #EBEBEB, #DEDEDE, #E1E1E1);}
     &.add_annotation {@include edit-bottom-states(-110, 7, #F9F9F9, #EBEBEB, #DEDEDE, #E1E1E1);}
 
-    &:first-child {@include border-left-radius(3px);}
-    &:last-child {@include border-right-radius(3px); border-right:1px solid #B0B0B0;}
+    &:first-child {@include border-left-radius(2px);}
+    &:last-child {@include border-right-radius(2px); border-right:1px solid #B0B0B0;}
   }
 }
 
@@ -829,6 +932,86 @@ div.cartodb-popup.dark  {
       &.remove {@include edit-bottom-states(-52, -16, #222, #222, #222, #222);}
     }
   }
+}
+
+.search-bar-container {
+  background: none !important;
+  padding: 0 0 0 2px;
+}
+
+.search-bar-input {
+  border-radius: 2px 0px 0px 2px;
+  width: 240px;
+  height: 30px;
+  line-height: 30px;
+  cursor: text;
+}
+
+.search-bar-browse {
+  float: right;
+  text-transform: none;
+}
+
+
+div.search-result-dropdown {
+  @include bb_dropdown;
+}
+
+.search-result-list {
+  list-style-type:none;
+}
+
+.search-result-row {
+  height: 19px;
+  line-height: 19px;
+  padding: 0px 12px;
+  min-width: 200px;
+  font-size: 15px;
+  .name {
+    background: none;
+    max-width: 250px;
+    min-width: 180px;
+    margin-right: 15px;
+    float: left;
+    text-transform: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tags {
+    background: none;
+    color: $Amber1;
+    max-width: 210px;
+    min-width: 180px;
+    float: right;
+    text-transform: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+}
+
+.search-result-row:hover {
+  background:$DarkGrey2;
+  
+}
+
+.search-result-row.no-result:hover {
+  background:none;
+  cursor: default;
+}
+
+.search-result-row.selected {
+  background-color: $DarkGrey1;
+  &:hover{
+    background-color: $DarkGrey1;
+  }
+}
+
+.search-result-row .found-sub {
+  font-weight: bold;
 }
 
 // Custom styles for Leaflet maps

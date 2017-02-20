@@ -15,6 +15,7 @@
   @import "../../old_common/vars";
   @import "../../old_common/common-sprite";
   @import "../../table/table-sprite";
+  @import '../variables/mixins';
 
   $text-shadow-color: rgba(black,0.25);
 
@@ -23,9 +24,9 @@
 
     div.left {
       position:relative;
-      width:65%;
+      width:auto;
       height:auto;
-      margin-left:17px;
+      margin-left:12px;
       z-index: 10;
 
       // Back button
@@ -158,8 +159,12 @@
       @include align-items(center, center);
       height:45px;
       margin:0;
+      padding: 0px;
+      
+      .dropdown > ul > li {
+        margin:0px;
+      }
 
-      li { margin:7px; }
 
       .privacy {
 
@@ -199,7 +204,8 @@
       position: absolute;
       right: 0;
       width:auto;
-      margin:5px 35px 0 0;
+      margin:8px 12px 0 0;
+      display: flex;
 
       li {
         position:relative;
@@ -207,54 +213,27 @@
         margin:0;
 
         a.btn {
-          line-height:20px;
-          padding: 0 20px;
-          text-shadow: none;
-          color: #fff;
-          @include box-shadow(none);
-          border-radius: 30px;
-          border: 2px solid #fff;
-          background:none;
-
+          @include bb_button_style;
+          @include bb_big_button;
           span {
-            padding: 1px 0;
             @include inline-block();
-            color: #fff;
-            font-size: 12px;
           }
-
-          &:hover {
-            span { text-decoration: underline; }
-          }
-
           &.dropdown {
-            padding-right: 20px;
-
-            &:before, &:after {
-              margin-right: 10px;
-            }
+            padding: 0px 30px 0px 12px;
           }
-
         }
 
-        &:after {
-          position:absolute;
-          content:'';
-          top:0px;
-          right:0;
-          margin:0 10px 0 0;
-          width: 1px;
-          height: 16px;
+        a.share span {
+          width: 85px;
         }
 
         &:last-child {
-          margin-left: 15px;
+          margin-left: 12px;
           &:after { display:none; }
         }
 
         a {
-          display: block;
-          font-weight:300;
+          display: block;          
         }
 
       }
@@ -263,6 +242,12 @@
     .export-options {
       position: absolute;
       top: 100px;
-      right: 20px;
     }
+
   }
+
+.add_new_layer {
+  @include bb_big_button;
+  border-radius: 0px 2px 2px 0px;
+  border-left: 0px;
+}
