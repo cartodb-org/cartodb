@@ -5,13 +5,16 @@
 @import "../variables/colors";
 @import "../variables/sizes";
 
+@import 'cdb-variables/colors';
+@import 'cdb-variables/sizes';
+
 .Footer {
-  position: relative;
   display: block;
+  position: relative;
   width: 100%;
-  padding: $sMargin-section 0;
-  background: $DarkGrey7;
+  padding: $baseSize * 5 0;
   border-top: 1px solid $DarkGrey8;
+  background: $DarkGrey7;
 }
 .Footer--light {
   background: white;
@@ -20,6 +23,10 @@
   padding: 0 0 40px;
   box-shadow: none;
   overflow: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  border-top: 0;
 }
 .Footer-inner {
   margin-top: $sIcon-layout;
@@ -49,7 +56,10 @@
   text-align: center;
 }
 .Footer-column {
-  padding-top: 60px;
+  padding-bottom: 40px;
+}
+.Footer-column--mobile {
+  border-top: 1px solid #EEE;
 }
 .Footer-title {
   margin-bottom: 12px;
@@ -63,10 +73,11 @@
   color: #797F8A;
   line-height: 28px;
   transition: color .15s ease;
-}
-.Footer-link:hover {
-  color: #333;
-  text-decoration: none;
+
+  &:hover {
+    color: #333;
+    text-decoration: none;
+  }
 }
 .Footer-colophon {
   margin-top: 40px;
@@ -84,14 +95,6 @@
 }
 .Footer-brand,
 .Footer-credits {
-  float: left;
-  vertical-align: top;
-}
-.Footer-credits,
-.Footer-credits .Footer-link {
-  line-height: 18px;
-}
-.Footer-credits {
   position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -99,6 +102,9 @@
 .Footer-credits span {
   color: #333;
   font-weight: 700;
+}
+.Footer-item {
+  display: block;
 }
 .Newsletter {
   position: relative;
@@ -150,12 +156,11 @@
   transition: all .15s;
 }
 .Social-link:hover {
-  color: #ccc; 
+  color: #ccc;
 }
 .Social-link.Social-link--twitter .Navmenu-icon {
   font-size: 22px;
 }
-
 @media only screen and (max-width: $sMedia-mobile) {
   .Footer-inner .Footer-logo {
     position: absolute;
@@ -196,9 +201,7 @@
     @include justify-content(flex-end, end);
   }
   .Footer-listItem {
-    margin: 0;
     padding: 0 $sMargin-elementInline;
-    text-align: auto;
   }
   .Footer-listItem:first-child { padding-left: 0 }
   .Footer-listItem:last-child { padding-right: 0 }

@@ -17,13 +17,13 @@
 }
 .CreateDialog-footerInner {
   position: relative;
-  @include display-flex();
-  @include justify-content(space-between, justify);
-  @include align-items(center, center);
   margin: 0 auto;
   padding: 15px 40px;
   background: $Grey10;
   min-height: 70px; // To have same consistent height regardless if the footer has buttons or not
+  @include display-flex();
+  @include justify-content(space-between, space-between);
+  @include align-items(baseline, baseline);
 }
 @media (min-width: $sMedia-tablet) { .CreateDialog-footerInner { width: $sMedia-tablet } }
 @media (min-width: 940px) { .CreateDialog-footerInner { width: 940px } }
@@ -56,9 +56,6 @@
 }
 .CreateDialog-footerInfoIcon { margin-right: 10px }
 .CreateDialog-footerInfoEnquiry {
-  font-size: $sFontSize-normal;
-  color: $cTypography-headers;
-  font-style: italic;
   padding-bottom: 10px;
 }
 .CreateDialog-footerActions {

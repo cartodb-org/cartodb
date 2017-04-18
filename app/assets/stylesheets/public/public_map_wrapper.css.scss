@@ -5,7 +5,7 @@
  */
 
 @import "../old_common/mixins";
-
+@import "../variables/sizes";
 
 // Public map
 .pane_map {
@@ -24,6 +24,7 @@
   }
 
   .Checkbox-label {
+    font-size: $sFontSize-normal;
     color: #fff;
   }
 }

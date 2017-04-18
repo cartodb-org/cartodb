@@ -1,6 +1,10 @@
-// cartodb.js version: 3.15.9
+// cartodb.js version: 3.15.10
 // uncompressed version: cartodb.uncompressed.js
+<<<<<<< HEAD
 // sha: 28dcdbb8746260108287abd0a2134e1184e286f5
+=======
+// sha: a316f4c786ae84597f7931cdaeea4540e914d7d4
+>>>>>>> cartodb/bbg-0.0.1
 (function() {
   var define;  // Undefine define (require.js), see https://github.com/CartoDB/cartodb.js/issues/543
   var root = this;
@@ -25982,7 +25986,7 @@ if (typeof window !== 'undefined') {
 
     var cdb = root.cdb = {};
 
-    cdb.VERSION = "3.15.9";
+    cdb.VERSION = "3.15.10";
     cdb.DEBUG = false;
 
     cdb.CARTOCSS_VERSIONS = {
@@ -26279,7 +26283,7 @@ if(!window.JSON) {
 
         /**
          * returns the base url to compose the final url
-         * http://user.cartodb.com/
+         * http://user.carto.com/
          */
         getSqlApiBaseUrl: function() {
           var url;
@@ -26297,7 +26301,7 @@ if(!window.JSON) {
         /**
          * returns the full sql api url, including the api endpoint
          * allos to specify the version
-         * http://user.cartodb.com/api/v1/sql
+         * http://user.carto.com/api/v1/sql
          */
         getSqlApiUrl: function(version) {
           version = version || 'v2';
@@ -26307,7 +26311,7 @@ if(!window.JSON) {
         /**
          *  returns the maps api host, removing user template
          *  and the protocol.
-         *  cartodb.com:3333
+         *  carto.com:3333
          */
         getMapsApiHost: function() {
           var url;
@@ -26322,8 +26326,13 @@ if(!window.JSON) {
 
     cdb.config = new Config();
     cdb.config.set({
+<<<<<<< HEAD
       cartodb_attributions: "",
       cartodb_logo_link: "http://www.cartodb.com"
+=======
+      cartodb_attributions: "© <a href=\"https://carto.com/attributions\" target=\"_blank\">CARTO</a>",
+      cartodb_logo_link: "http://www.carto.com"
+>>>>>>> cartodb/bbg-0.0.1
     });
 
 })();
@@ -27210,8 +27219,8 @@ cdb.geo.geocoder.YAHOO = {
           }
 
           for(var i in res) {
-            var r = res[i]
-              , position;
+            var r = res[i],
+            position;
 
             position = {
               lat: r.latitude,
@@ -27229,8 +27238,55 @@ cdb.geo.geocoder.YAHOO = {
         callback(coordinates);
       });
   }
-}
+};
 
+cdb.geo.geocoder.MAPZEN = {
+  keys:{
+    app_id:  "search-DH1Lkhw"
+  },
+
+  geocode: function(address, callback){
+    address = address.toLowerCase()
+      .replace(/é/g,'e')
+      .replace(/á/g,'a')
+      .replace(/í/g,'i')
+      .replace(/ó/g,'o')
+      .replace(/ú/g,'u');
+
+    var protocol = '';
+    if(location.protocol.indexOf('http') === -1) {
+      protocol = 'http:';
+    }
+
+    $.getJSON(protocol + '//search.mapzen.com/v1/search?text=' + encodeURIComponent(address) + '&api_key=' + this.keys.app_id, function(data) {
+  
+    var coordinates = [];
+    if (data && data.features && data.features.length > 0) {
+      var res = data.features;
+      for (var i in res){
+        var r = res[i],
+        position;
+        position = {
+          lat: r.geometry.coordinates[1],
+          lon: r.geometry.coordinates[0]
+        };
+        if(r.properties.layer){
+          position.type = r.properties.layer;
+        }  
+        
+        if(r.properties.label){
+          position.title = r.properties.label;
+        } 
+
+        coordinates.push(position);
+      }
+    }
+    if (callback) {
+      callback.call(this, coordinates);
+    }
+  });
+  }
+};
 
 
 cdb.geo.geocoder.NOKIA = {
@@ -27261,8 +27317,8 @@ cdb.geo.geocoder.NOKIA = {
           var res = data.results.items;
 
           for(var i in res) {
-            var r = res[i]
-              , position;
+            var r = res[i],
+            position;
 
             position = {
               lat: r.position[0],
@@ -27275,7 +27331,7 @@ cdb.geo.geocoder.NOKIA = {
                 south: r.bbox[1],
                 east: r.bbox[2],
                 west: r.bbox[0]
-              }
+              };
             }
             if (r.category) {
               position.type = r.category.id;
@@ -27292,7 +27348,7 @@ cdb.geo.geocoder.NOKIA = {
         }
       });
   }
-}
+};
 
 cdb.geo.geocoder.BING = {
 
@@ -27527,10 +27583,10 @@ cdb.geo.CartoDBLayer = cdb.geo.MapLayer.extend({
     interactivity: null,
     interaction: true,
     debug: false,
-    tiler_domain: "cartodb.com",
+    tiler_domain: "carto.com",
     tiler_port: "80",
     tiler_protocol: "http",
-    sql_api_domain: "cartodb.com",
+    sql_api_domain: "carto.com",
     sql_api_port: "80",
     sql_api_protocol: "http",
     extra_params: {},
@@ -31533,6 +31589,14 @@ cdb.geo.ui.Search = cdb.core.View.extend({
   _ZOOM_BY_CATEGORY: {
     'building': 18,
     'postal-area': 15,
+    'venue':18,
+    'region':8,
+    'address':18,
+    'country':5,
+    'county':8,
+    'locality':12,
+    'localadmin':11,
+    'neighbourhood':15,
     'default': 12
   },
 
@@ -31604,7 +31668,11 @@ cdb.geo.ui.Search = cdb.core.View.extend({
     this._showLoader();
     // Remove previous pin
     this._destroySearchPin();
+<<<<<<< HEAD
     cdb.geo.geocoder.BING.geocode(address, function(places) {
+=======
+    cdb.geo.geocoder.MAPZEN.geocode(address, function(places) {
+>>>>>>> cartodb/bbg-0.0.1
       self._onResult(places);
       // Hide loader
       self._hideLoader();
@@ -31677,7 +31745,7 @@ cdb.geo.ui.Search = cdb.core.View.extend({
   _destroySearchPin: function() {
     this._unbindEvents();
     this._destroyPin();
-    this._destroyInfowindow()
+    this._destroyInfowindow();
   },
 
   _createInfowindow: function(position, address) {
@@ -35203,7 +35271,7 @@ cdb.geo.common.CartoDBLogo = {
         var protocol = location.protocol.indexOf('https') === -1 ? 'http': 'https';
         var link = cdb.config.get('cartodb_logo_link');
         cartodb_link.innerHTML = "<a href='" + link + "' target='_blank'><img width='71' height='29' src='" + protocol + "://cartodb.s3.amazonaws.com/static/new_logo" + (is_retina ? '@2x' : '') + ".png' style='position:absolute; bottom:" + 
-          ( position.bottom || 0 ) + "px; left:" + ( position.left || 0 ) + "px; display:block; width:71px!important; height:29px!important; border:none; outline:none;' alt='CartoDB' title='CartoDB' />";
+          ( position.bottom || 0 ) + "px; left:" + ( position.left || 0 ) + "px; display:block; width:71px!important; height:29px!important; border:none; outline:none;' alt='CARTO' title='CARTO' />";
         container.appendChild(cartodb_link);
       }
     },( timeout || 0 ));
@@ -35384,7 +35452,7 @@ cdb.geo.LeafLetTiledLayerView = LeafLetTiledLayerView;
       subdomains: 'abcd',
       minZoom: 0,
       maxZoom: 18,
-      attribution: 'Map designs by <a href="http://stamen.com/">Stamen</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, Provided by <a href="http://cartodb.com">CartoDB</a>'
+      attribution: 'Map designs by <a href="http://stamen.com/">Stamen</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, Provided by <a href="https://carto.com">CARTO</a>'
     };
   };
   
@@ -35506,10 +35574,10 @@ L.CartoDBGroupLayerBase = L.TileLayer.extend({
     debug:          false,
     visible:        true,
     added:          false,
-    tiler_domain:   "cartodb.com",
+    tiler_domain:   "carto.com",
     tiler_port:     "80",
     tiler_protocol: "http",
-    sql_api_domain:     "cartodb.com",
+    sql_api_domain:     "carto.com",
     sql_api_port:       "80",
     sql_api_protocol:   "http",
     maxZoom: 30, // default leaflet zoom level for a layers is 18, raise it
@@ -36932,10 +37000,10 @@ var default_options = {
   debug:          false,
   visible:        true,
   added:          false,
-  tiler_domain:   "cartodb.com",
+  tiler_domain:   "carto.com",
   tiler_port:     "80",
   tiler_protocol: "http",
-  sql_api_domain:     "cartodb.com",
+  sql_api_domain:     "carto.com",
   sql_api_port:       "80",
   sql_api_protocol:   "http",
   extra_params:   {
@@ -39484,7 +39552,14 @@ var Vis = cdb.core.View.extend({
     this._applyOptions(data, options);
 
     // to know if the logo is enabled search in the overlays and see if logo overlay is included and is shown
-    var has_logo_overlay = !!_.find(data.overlays, function(o) { return o.type === 'logo' && o.options.display; });
+    var has_logo_overlay = !!_.find(data.overlays, function(o) {
+      // display option is not implemented for builder, if type logo is present just it
+      if (o.options == null) {
+        return (o.type === 'logo');
+      }
+
+      return o.type === 'logo' && o.options.display;
+    });
 
     this.cartodb_logo = (options.cartodb_logo !== undefined) ? options.cartodb_logo: has_logo_overlay;
 
@@ -40266,9 +40341,9 @@ var Vis = cdb.core.View.extend({
     var domain = attrs.sql_api_domain + (port ? ':' + port: '')
     var protocol = attrs.sql_api_protocol;
     var version = 'v1';
-    if (domain.indexOf('cartodb.com') !== -1) {
+    if (domain.indexOf('carto.com') !== -1) {
       protocol = 'http';
-      domain = "cartodb.com";
+      domain = "carto.com";
       version = 'v2';
     }
 
@@ -40772,7 +40847,7 @@ cdb.vis.Vis = Vis;
       center: [0, 0],
       size:  [320, 240],
       tiler_port: 80,
-      tiler_domain: "cartodb.com"
+      tiler_domain: "carto.com"
     };
 
   };
@@ -41870,7 +41945,7 @@ Layers.register('torque', function(vis, data) {
   normalizeOptions(vis, data);
   // default is https
   if(vis.https) {
-    if(data.sql_api_domain && data.sql_api_domain.indexOf('cartodb.com') !== -1) {
+    if(data.sql_api_domain && data.sql_api_domain.indexOf('carto.com') !== -1) {
       data.sql_api_protocol = 'https';
       data.sql_api_port = 443;
       data.tiler_protocol = 'https';
@@ -41906,7 +41981,7 @@ Layers.register('torque', function(vis, data) {
    * compose cartodb url
    */
   function cartodbUrl(opts) {
-    var host = opts.host || 'cartodb.com';
+    var host = opts.host || 'carto.com';
     var protocol = opts.protocol || 'https';
     return protocol + '://' + opts.user + '.' + host + '/api/v1/viz/' + opts.table + '/viz.json';
   }
@@ -42148,7 +42223,7 @@ Layers.register('torque', function(vis, data) {
       if(opts && opts.completeDomain) {
         template = opts.completeDomain;
       } else {
-        var host = opts.host || 'cartodb.com';
+        var host = opts.host || 'carto.com';
         var protocol = opts.protocol || 'https';
         template = protocol + '://{user}.' + host;
       }

@@ -19,7 +19,7 @@
 
 .TabLink {
   display: block;
-  width: 118px;
+  width: 138px;
   height: 38px;
   padding: 0 10px;
   background-color: $DarkGrey1;
@@ -29,12 +29,12 @@
   color: $Grey2;
   font-size: 14px;
   cursor: pointer;
-	&:first-child {
-		border-radius: 2px 0px 0px 2px;	
-	}
-	&:last-child {
-		border-radius: 0px 2px 2px 0px;
-	}
+  &:first-child {
+    border-radius: 2px 0px 0px 2px; 
+  }
+  &:last-child {
+    border-radius: 0px 2px 2px 0px;
+  }
 
   &:hover {
     background-color: $tabBgHover;
@@ -42,6 +42,11 @@
     text-decoration: none;
   }
 }
+.TabLink:hover {
+  border-color: rgba(#BBD7F2, 1);
+}
+.is-selected > .TabLink,
+.is-selected > .TabLink:hover,
 .TabLink.selected,
 .TabLink.selected:hover {
   background: $tabBgSelected;
@@ -57,7 +62,7 @@
   border-color: rgba(#BBD7F2, 1);
 }
 .TabLink.disabled {
-  opcacity: .4;
+  opacity: .4;
   background: $btn_background_disabled;
   box-shadow: $button_shadow_disabled;
   color: $color_disabled_text;
@@ -75,8 +80,15 @@
   }
 }
 .TabLink.arcgis {
-  width: 130px;
+  width: 160px;
 }
+.TabLink.box {
+  width: auto;
+  height: auto;
+  margin: 0;
+  display: block;
+}
+
 
 // Tab icons
 .TabIcon {
@@ -95,27 +107,22 @@
 .TabLink.disabled .TabIcon.is-scratch,
 .TabLink.disabled:hover .TabIcon.is-scratch { background-position: 0 0 }
 
-.TabIcon.is-dropbox {
-  width: 22px;
-  background-position: -18px 0;
-}
-.TabLink.selected .TabIcon.is-dropbox,
-.TabLink:hover .TabIcon.is-dropbox { background-position: -18px -20px }
-.TabLink.disabled .TabIcon.is-dropbox,
-.TabLink.disabled:hover .TabIcon.is-dropbox { background-position: -18px 0 }
-
-.TabIcon.is-gdrive {
-  width: 25px;
-  background-position: -40px 0;
-}
-.TabLink.selected .TabIcon.is-gdrive,
-.TabLink:hover .TabIcon.is-gdrive { background-position: -40px -20px }
-.TabLink.disabled .TabIcon.is-gdrive,
-.TabLink.disabled:hover .TabIcon.is-gdrive { background-position: -40px 0 }
-
-.TabIcon.is-mailchimp {
-  width: 18px;
-  background-position: -65px 0;
+@mixin tabIcon($name, $width, $x: 0, $y: -20px, $height: 20px) {
+  .TabIcon.is-#{$name} {
+    width: $width;
+    height: $height;
+    background-position: $x 0;
+  }
+  .is-selected > .TabLink .TabIcon.is-#{$name},
+  .is-selected > .TabLink:hover .TabIcon.is-#{$name},
+  .TabLink.selected .TabIcon.is-#{$name},
+  .TabLink:hover .TabIcon.is-#{$name} {
+    background-position: $x $y;
+  }
+  .TabLink.disabled .TabIcon.is-#{$name},
+  .TabLink.disabled:hover .TabIcon.is-#{$name} {
+    background-position: $x 0;
+  }
 }
 .TabLink.selected .TabIcon.is-mailchimp,
 .TabLink:hover .TabIcon.is-mailchimp { background-position: -65px -20px }

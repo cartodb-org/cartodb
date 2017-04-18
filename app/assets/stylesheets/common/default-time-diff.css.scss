@@ -7,11 +7,12 @@
 
 .DefaultTimeDiff {
   @include display-flex();
-  @include align-items(center, center);  
+  @include align-items(center, center);
   color:$Grey7;
 }
 .DefaultTimeDiff-icon {
   margin-right: 5px;
   color: $Grey7;
+  font-weight: $sFontWeight-normal;
 }
 .DefaultTimeDiff p { margin-left: 5px }

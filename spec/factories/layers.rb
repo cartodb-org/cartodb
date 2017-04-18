@@ -15,7 +15,7 @@ FactoryGirl.define do
         "subdomains": "abcd",
         "minZoom": "0",
         "maxZoom": "18",
-        "attribution": "\u00a9 <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors \u00a9 <a href=\"http://cartodb.com/attributions#basemaps\">CartoDB</a>",
+        "attribution": "\u00a9 <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors \u00a9 <a href=\"https://carto.com/attributions\">CARTO</a>",
         "urlTemplate": "http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
         "type": "Tiled",
         "name": "Positron Labels"
@@ -59,6 +59,19 @@ FactoryGirl.define do
       }.to_json
 
       tooltip tooltip_light
+    end
+
+    factory :carto_layer_with_sql do
+      ignore do
+        table_name 'default_table'
+      end
+      options do
+        {
+          table_name: table_name,
+          query:      "select * from #{table_name}",
+          sql_wrap:   "select * from (<%= sql %>) __wrap"
+        }
+      end
     end
   end
 

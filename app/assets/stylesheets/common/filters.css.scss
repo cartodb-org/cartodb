@@ -57,6 +57,10 @@
 }
 .Filters-inner.show-second-row {
   margin-top: -40px;
+
+  .Filters-row:last-child {
+    margin-top: 4px;
+  }
 }
 .Filters-separator {
   position:absolute;
@@ -77,13 +81,13 @@
 .Filters-row--centered { @include justify-content(center) }
 .Filters-group {
   @include display-flex();
-  @include justify-content(space-between, justify);
   @include align-items(center, center);
   &:not(:first-child) {
     margin-left: 10px;
   }
 }
-.Filters-group.is-hidden {
+.Filters-group.is-hidden,
+.Filters-addLayer.is-hidden {
   display: none;
 }
 .Filters-group.is-searching {
@@ -97,25 +101,23 @@
   &:first-child { margin-left: 0 }
   &:last-child { margin-right: 0 }
   .Filters-typeLink {
-	color: $Grey7;
-	&:hover {
-	color: $Grey2;
-	}
-	&.js-create_empty{ 
-		@include actionButton;
-		Padding: 0 12px;
-		line-height: 28px;
-		margin-top: 30px;
-	}
+  color: $Grey7;
+  &:hover {
+  color: $Grey2;
+  }
+  &.js-create_empty{ 
+    @include actionButton;
+    Padding: 0 12px;
+    line-height: 28px;
+    margin-top: 30px;
+  }
   }
 
 }
+
 .Filters-typeItem.Filters-typeItem--moreMargins {
   margin-right: 15px;
   margin-left: 15px;
-}
-.Filters-typeItem--searchEnabler {
-  min-width: 65px;
 }
 .Filters-typeItem--searchField {
   @include flex-grow(1);
@@ -128,6 +130,7 @@
 }
 
 .Filters-searchLink {
+  display: block;
   margin-right: 15px;
   padding-right: 2px;
   font-size: 14px;
@@ -136,17 +139,16 @@
   background: transparent;
   border: none;
   outline: none;
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -5px;
-    width: 1px;
-    height: 20px;
-    margin-top: -10px;
-    background: $cStructure-softLine;
-  }
+}
+.Filters-searchLink:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 1px;
+  height: 20px;
+  margin-top: -10px;
+  background: $cStructure-softLine;
 }
 .Filters-searchLinkIcon {
   @include inline-block();
@@ -181,22 +183,9 @@
 }
 .Filters-cleanSearch {
   position:absolute;
-  top:23px;
-  right:0;
-  width:29px;
-  height:29px;
-  border-radius: 29px;
-  border:1px solid $cNavButton-default;
-  color: $cNavButton-default;
-  text-align: center;
-  line-height:31px;
-  background: transparent;
-  outline: none;
-
-  &:hover {
-    border:1px solid $cNavButton-active;
-    color: $cNavButton-active;
-  }
+  margin-top: -8px;
+  top: 50%;
+  right: 0;
 }
 .Filters-cleanSearch.Filters-cleanSearch--short {
   right: -10px;
@@ -227,11 +216,10 @@ a.Filters-cleanSearch { line-height:32px }
   background: transparent;
   border: none;
   outline: none;
-
-  &:hover {
-    color: $Teal1;
-    text-decoration: none;
-  }
+}
+.Filters-typeLink:hover {
+  color: $Teal1;
+  text-decoration: none;
 }
 .Filters-typeLink.Filters-typeLink--grey {
   color: #979EA1;
@@ -242,16 +230,18 @@ a.Filters-cleanSearch { line-height:32px }
 }
 .Filters-typeLink.is-selected {
   color:$Grey1;;
+  height: 16px;
+  display: block;
 
   &:before {
-    content:'';
-    position:absolute;
-    bottom:-1px;
-    left:0;
-    right:0;
-    width:100%;
-    height:3px;
-    background:$SelectionBlue2;
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 3px;
+    background: $SelectionBlue2;
   }
 
   &:hover {
@@ -290,11 +280,7 @@ a.Filters-cleanSearch { line-height:32px }
   line-height: 17px;
 }
 .Filters-actionButton { margin-right: 10px }
-.Filters-selectedItems {
-  font-size:15px;
-  font-weight:300;
-  color:$cTypography-secondary;
-}
+
 .Filters-actionsList {
   @include display-flex();
   @include justify-content(space-between, justify);
@@ -327,6 +313,10 @@ a.Filters-cleanSearch { line-height:32px }
 .Filters-typeItem.Filters-typeItem--searchField,
 .Filters-searchItem {
   display: inherit;
+}
+.Filters-typeItem.Filters-typeItem--searchEnabler {
+  padding-right: 32px;
+  margin-right: 32px;
 }
 .Filters-typeItem.is-searching {
   display: none;

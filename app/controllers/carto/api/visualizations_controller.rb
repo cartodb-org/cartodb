@@ -24,10 +24,13 @@ module Carto
       before_filter :optional_api_authorization, only: [:index, :vizjson2, :vizjson3, :is_liked, :static_map]
 
       before_filter :id_and_schema_from_params
-      before_filter :load_by_name_or_id, only: [:vizjson2, :vizjson3]
       before_filter :load_visualization, only: [:likes_count, :likes_list, :is_liked, :show, :stats, :list_watching,
+<<<<<<< HEAD
                                                 :static_map]
       before_filter :load_common_data, only: [:index]
+=======
+                                                :static_map, :vizjson2, :vizjson3]
+>>>>>>> cartodb/bbg-0.0.1
 
       rescue_from Carto::LoadError, with: :rescue_from_carto_error
       rescue_from Carto::UUIDParameterFormatError, with: :rescue_from_carto_error
@@ -138,11 +141,12 @@ module Carto
         render_jsonp({
           id: @visualization.id,
           likes: @visualization.likes.count,
-          liked: current_viewer ? @visualization.is_liked_by_user_id?(current_viewer.id) : false
+          liked: current_viewer ? @visualization.liked_by?(current_viewer.id) : false
         })
       end
 
       def vizjson2
+        @visualization.mark_as_vizjson2 unless carto_referer?
         render_vizjson(generate_vizjson2)
       end
 
@@ -261,30 +265,9 @@ module Carto
         render_jsonp(vizjson)
       rescue KeyError => exception
         render(text: exception.message, status: 403)
-      rescue CartoDB::NamedMapsWrapper::HTTPResponseError => exception
-        CartoDB.notify_exception(exception, user: current_user, template_data: exception.template_data)
-        render_jsonp({ errors: { named_maps_api: "Communication error with tiler API. HTTP Code: #{exception.message}" } }, 400)
-      rescue CartoDB::NamedMapsWrapper::NamedMapDataError => exception
-        CartoDB.notify_exception(exception)
-        render_jsonp({ errors: { named_map: exception.message } }, 400)
-      rescue CartoDB::NamedMapsWrapper::NamedMapsDataError => exception
-        CartoDB.notify_exception(exception)
-        render_jsonp({ errors: { named_maps: exception.message } }, 400)
       rescue => exception
         CartoDB.notify_exception(exception)
         raise exception
-      end
-
-      def load_by_name_or_id
-        @table =  is_uuid?(@id) ? Carto::UserTable.where(id: @id).first  : nil
-
-        # INFO: id should _really_ contain either an id of a user_table or a visualization, but for legacy reasons...
-        if @table
-          @visualization = @table.visualization
-        else
-          load_visualization
-          @table = @visualization
-        end
       end
 
       def load_visualization
@@ -342,6 +325,12 @@ module Carto
         VisualizationPresenter.new(visualization, current_viewer, self).to_poro
       end
 
+      def carto_referer?
+        referer_host = URI.parse(request.referer).host
+        referer_host && (referer_host.ends_with?('carto.com') || referer_host.ends_with?('cartodb.com'))
+      rescue URI::InvalidURIError
+        false
+      end
     end
   end
 end

@@ -5,6 +5,9 @@
 @import "../variables/sizes";
 @import "../variables/mixins";
 
+@import 'cdb-variables/colors';
+@import 'cdb-variables/sizes';
+
 $fieldBgColor: transparent;
 $fieldBorderColor: #DFE8EC;
 

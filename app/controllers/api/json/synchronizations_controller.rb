@@ -148,14 +148,14 @@ class Api::Json::SynchronizationsController < Api::ApplicationController
 
   def setup_member_attributes
     member_attributes = payload.merge(
-            name:                   params[:table_name],
-            user_id:                current_user.id,
-            state:                  Synchronization::Member::STATE_CREATED,
-            # Keep in sync with http://docs.cartodb.com/cartodb-platform/import-api.html#params-4
-            type_guessing:          !["false", false].include?(params[:type_guessing]),
-            quoted_fields_guessing: !["false", false].include?(params[:quoted_fields_guessing]),
-            content_guessing:       ["true", true].include?(params[:content_guessing])
-        )
+      name:                   params[:table_name],
+      user_id:                current_user.id,
+      state:                  Synchronization::Member::STATE_CREATED,
+      # Keep in sync with https://carto.com/docs/carto-engine/import-api/sync-tables/#params-1
+      type_guessing:          !["false", false].include?(params[:type_guessing]),
+      quoted_fields_guessing: !["false", false].include?(params[:quoted_fields_guessing]),
+      content_guessing:       ["true", true].include?(params[:content_guessing])
+    )
 
     if from_sync_file_provider?
       member_attributes = member_attributes.merge({
@@ -171,9 +171,15 @@ class Api::Json::SynchronizationsController < Api::ApplicationController
       member_attributes[:service_item_id] = external_source.import_url.presence
     end
 
+<<<<<<< HEAD
     if params[:fdw].present?
       member_attributes[:service_name] = 'connector'
       member_attributes[:service_item_id] = params[:fdw]
+=======
+    if params[:connector].present?
+      member_attributes[:service_name]    = 'connector'
+      member_attributes[:service_item_id] = params[:connector].to_json
+>>>>>>> cartodb/bbg-0.0.1
     end
 
     member_attributes
@@ -204,7 +210,10 @@ class Api::Json::SynchronizationsController < Api::ApplicationController
       options[:service_item_id] = params[:fdw]
     elsif params[:remote_visualization_id].present?
       external_source = get_external_source(params[:remote_visualization_id])
-      options.merge!( { data_source: external_source.import_url.presence } )
+      options.merge!(data_source: external_source.import_url.presence)
+    elsif params[:connector].present?
+      options[:service_name]    = 'connector'
+      options[:service_item_id] = params[:connector].to_json
     else
       url = params[:url]
       validate_url!(url) unless Rails.env.development? || Rails.env.test? || url.nil? || url.empty?
@@ -233,4 +242,3 @@ class Api::Json::SynchronizationsController < Api::ApplicationController
     external_source
   end
 end
-

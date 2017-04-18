@@ -68,8 +68,26 @@ module CartoDB
         IN2CSV_WARNINGS.map { |w| ['grep', '-v', w.gsub('*', "\\*")] }
       end
 
+<<<<<<< HEAD
       def newline_remover_path
         [CartoDB.python_bin_path, newline_remover_path]
+=======
+      def in2csv_warning_filter
+        IN2CSV_WARNINGS.map { |w| ['grep', '-v', w.gsub('*', "\\*")] }
+      end
+
+      def newline_remover_command
+        [CartoDB.python_bin_path, newline_remover_path]
+      end
+
+      def in2csv_command
+        python_path = CartoDB.python_path
+        if python_path.empty?
+          "in2csv"
+        else
+          "#{python_path}/in2csv"
+        end
+>>>>>>> cartodb/bbg-0.0.1
       end
 
       attr_reader :filepath, :job

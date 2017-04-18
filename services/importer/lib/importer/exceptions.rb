@@ -1,7 +1,11 @@
 # encoding: utf-8
 
 require_relative '../../../../services/datasources/lib/datasources/exceptions'
+<<<<<<< HEAD
 require_relative './base_connector'
+=======
+require_relative './connector_runner'
+>>>>>>> cartodb/bbg-0.0.1
 
 module CartoDB
   module Importer2
@@ -16,7 +20,11 @@ module CartoDB
     end
 
     # Generic/unmapped errors
-    class GenericImportError < StandardError; end
+    class GenericImportError < StandardError
+      def initialize(message = "Import Error")
+        super
+      end
+    end
     # Mapped errors
 
     class FileTooBigError < BaseImportError
@@ -84,13 +92,14 @@ module CartoDB
     class TiffToSqlConversionError              < StandardError; end
     class UnknownError                          < StandardError; end
     class UnknownSridError                      < StandardError; end
-    class UnsupportedFormatError                < StandardError; end
+    class UnsupportedFormatError                < GenericImportError; end
     class UploadError                           < StandardError; end
 
     class DownloadError                         < StandardError; end
     class NotFoundDownloadError                 < DownloadError; end
     class UnauthorizedDownloadError             < DownloadError; end
     class CouldntResolveDownloadError           < DownloadError; end
+    class PartialDownloadError                  < DownloadError; end
 
     class TooManyNodesError                     < StandardError; end
     class NotAFileError                         < StandardError; end
@@ -116,6 +125,7 @@ module CartoDB
       NotFoundDownloadError                 => 1100,
       UnauthorizedDownloadError             => 1101,
       CouldntResolveDownloadError           => 1102,
+      PartialDownloadError                  => 1103,
 
       UnsupportedFormatError                => 1002,
       ExtractionError                       => 1003,
@@ -152,7 +162,7 @@ module CartoDB
       TableQuotaExceededError               => 8002,
       UnknownError                          => 99999,
       CartoDB::Datasources::DatasourceBaseError                   => 1012,
-      CartoDB::Datasources::AuthError                             => 1011,
+      CartoDB::Datasources::AuthError                             => 1012,
       CartoDB::Datasources::TokenExpiredOrInvalidError            => 1012,
       CartoDB::Datasources::InvalidServiceError                   => 1012,
       CartoDB::Datasources::DataDownloadError                     => 1011,
@@ -161,7 +171,7 @@ module CartoDB
       CartoDB::Datasources::NoResultsError                        => 1015,
       CartoDB::Datasources::ParameterError                        => 99999,
       CartoDB::Datasources::ServiceDisabledError                  => 99999,
-      CartoDB::Datasources::OutOfQuotaError                       => 8001,
+      CartoDB::Datasources::OutOfQuotaError                       => 8006,
       CartoDB::Datasources::InvalidInputDataError                 => 1012,
       CartoDB::Datasources::ResponseError                         => 1011,
       CartoDB::Datasources::ExternalServiceError                  => 1012,
@@ -169,10 +179,15 @@ module CartoDB
       CartoDB::Datasources::DropboxPermissionError                => 1016,
       CartoDB::Datasources::BoxPermissionError                    => 1021,
       CartoDB::Datasources::GDriveNoExternalAppsAllowedError      => 1008,
+<<<<<<< HEAD
       CartoDB::Importer2::BaseConnector::ConnectorError               => 1500,
       CartoDB::Importer2::BaseConnector::InvalidChannelError          => 1501,
       CartoDB::Importer2::BaseConnector::InvalidParametersError       => 1502
+=======
+      Carto::Connector::ConnectorError               => 1500,
+      Carto::Connector::ConnectorsDisabledError      => 1501,
+      Carto::Connector::InvalidParametersError       => 1502
+>>>>>>> cartodb/bbg-0.0.1
     }
   end
 end
-

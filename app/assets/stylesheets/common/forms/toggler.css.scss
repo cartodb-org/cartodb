@@ -35,9 +35,9 @@ $sHeight: 14px;
   position: absolute;
   top: 0;
   left: 0;
-  width: 29px;
-  height: 14px;
-  border-radius: 2px;  
+  width: $sWidth;
+  height: $sHeight;
+  border-radius: 30px;
   cursor: pointer;
   @include transition(all 150ms ease);
   background-color: $DarkGrey8;
@@ -61,4 +61,24 @@ $sHeight: 14px;
 }
 .Toggler input:checked + label {
   background:$Blue4;
+}
+
+// Toggler grey
+$color: #BBB;
+.Toggler--grey label {
+  width: $sWidth - 2px;
+  height: $sHeight - 2px;
+  border: 1px solid $color;
+  background: #FFF;
+  box-shadow: none;
+}
+.Toggler--grey label:before {
+  top: 3px;
+  background: $color;
+}
+.Toggler--grey input:checked + label:before {
+  left: 19px;
+}
+.Toggler--grey input:checked + label {
+  background-color: #FFF;
 }

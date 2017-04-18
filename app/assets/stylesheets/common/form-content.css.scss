@@ -6,7 +6,6 @@
 // --------------------------------------------------
 
 $sLabel-width: 140px;
-
 .Form--minHeight { min-height: 400px }
 .Form-title {
   display: block;
@@ -40,6 +39,11 @@ $sLabel-width: 140px;
   font-size: 14px;
   font-weight: $sFontWeight-lighter;
   color: $cTypography-paragraphs;
+}
+.Form-modal {
+  @include justify-content(center);
+  @include align-items(center);
+  width: 100%;
 }
 .Form-row {
   @include display-flex();
@@ -113,17 +117,8 @@ $sLabel-width: 140px;
 .Form-label.Form-label--large { font-size: $sFontSize-large }
 .Form-label.Form-label--step { @include flex-grow(1) }
 .Form-rowPreview { width: 735px }
-.Form-separator {
-  position: relative;
-  display: block;
-  padding: 0 $sMargin-element;
-  line-height: 50px;
-  background: transparent;
-  font-size: 14px;
-  font-weight: $sFontWeight-lighter;
-  color: $cTypography-secondary;
-  z-index: 0;
-}
+
+
 .Form-rowData {
   position: relative;
   @include display-flex();
@@ -520,6 +515,8 @@ $sLabel-width: 140px;
   width: 100%;
   outline: none;
   z-index: 2;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .Form-tagsList.tagit .tagit-choice {

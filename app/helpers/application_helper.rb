@@ -1,8 +1,18 @@
 # coding: utf-8
 require_dependency 'cartodb_config_utils'
+require_dependency 'carto_gears_api/helpers/pages_helper'
 
 module ApplicationHelper
   include CartoDB::ConfigUtils
+  include SafeJsObject
+  include TrackjsHelper
+  include GoogleAnalyticsHelper
+  include HubspotHelper
+  include FrontendConfigHelper
+  include AppAssetsHelper
+  include MapsApiHelper
+  include SqlApiHelper
+  include CartoGearsApi::Helpers::PagesHelper
 
   def current_user
     super(CartoDB.extract_subdomain(request))
@@ -11,6 +21,10 @@ module ApplicationHelper
   def show_footer?
     (controller_name == 'tables' && action_name != 'show') ||
     (controller_name == 'client_applications') || (controller_name == 'users')
+  end
+
+  def show_google_api_keys?(user)
+    user.google_maps_geocoder_enabled? && (!user.organization.present? || user.organization_owner?)
   end
 
   def in_my_tables?
@@ -45,25 +59,8 @@ module ApplicationHelper
     end
   end
 
-  def sql_api_template(privacy="private")
-      sql_api = Cartodb.config[:sql_api][privacy]
-      if CartoDB.subdomainless_urls?
-        sql_api["protocol"] + "://" + sql_api["domain"] + ":" + sql_api["port"].to_s + "/user/{user}"
-      else
-        sql_api["protocol"] + "://{user}." + sql_api["domain"] + ":" + sql_api["port"].to_s
-      end
-  end
-
-  def maps_api_template(privacy="private")
-      maps_api = Cartodb.config[:tiler][privacy]
-      if CartoDB.subdomainless_urls?
-        maps_api["protocol"] + "://" + maps_api["domain"] + ":" + maps_api["port"].to_s + "/user/{user}"
-      else
-        maps_api["protocol"] + "://{user}." + maps_api["domain"] + ":" + maps_api["port"].to_s
-      end
-  end
-
   module_function :maps_api_template
+<<<<<<< HEAD
   module_function :sql_api_template
 
   def frontend_config
@@ -117,6 +114,10 @@ module ApplicationHelper
 
     config.to_json
   end
+=======
+  module_function :sql_api_template, :sql_api_url
+  module_function :app_assets_base_url
+>>>>>>> cartodb/bbg-0.0.1
 
   def frontend_config_public(options={ https_apis: false })
     api_type = (options[:https_apis].present? && options[:https_apis]) ? 'private' : 'public'
@@ -162,39 +163,17 @@ module ApplicationHelper
     current_user.present? ? current_user.account_type.to_s.upcase : 'UNAUTHENTICATED'
   end
 
-  def insert_google_analytics(track, public_view = false, custom_vars = {})
-    if !Cartodb.config[:google_analytics].blank? && !Cartodb.config[:google_analytics][track].blank? && !Cartodb.config[:google_analytics]["domain"].blank?
-      ua = Cartodb.config[:google_analytics][track]
-      domain = Cartodb.config[:google_analytics]["domain"]
-
-      render(:partial => 'shared/analytics', :locals => { ua: ua, domain: domain, custom_vars: custom_vars, public_view: public_view })
-    end
-  end
-
-  def insert_trackjs(app = 'editor')
-    if !Cartodb.config[:trackjs].blank? && !Cartodb.config[:trackjs]['customer'].blank?
-      customer = Cartodb.config[:trackjs]['customer']
-      enabled = Cartodb.config[:trackjs]['enabled']
-      app_key = Cartodb.config[:trackjs]['app_keys'][app]
-
-      render(:partial => 'shared/trackjs', :locals => { customer: customer, enabled: enabled, app_key: app_key })
-    end
-  end
-
-  def insert_hubspot(app = 'editor')
-    if CartoDB::Hubspot::instance.enabled? && !CartoDB::Hubspot::instance.token.blank?
-      token = CartoDB::Hubspot::instance.token
-      event_ids = CartoDB::Hubspot::instance.event_ids
-
-      render(:partial => 'shared/hubspot', :locals => { token: token, event_ids: event_ids })
-    end
-  end
-
   def insert_hubspot_form(form = 'newsletter')
     if CartoDB::Hubspot::instance.enabled? && !CartoDB::Hubspot::instance.token.blank? && CartoDB::Hubspot::instance.form_ids.present? && !CartoDB::Hubspot::instance.form_ids[form].blank?
       token = CartoDB::Hubspot::instance.token
 
       render(:partial => 'shared/hubspot_form', :locals => { token: token, form_id: CartoDB::Hubspot::instance.form_ids[form] })
+    end
+  end
+
+  def insert_fullstory
+    if Cartodb.get_config(:fullstory, 'org').present? && current_user && current_user.account_type.casecmp('FREE').zero?
+      render(partial: 'shared/fullstory', locals: { org: Cartodb.get_config(:fullstory, 'org') })
     end
   end
 
@@ -254,32 +233,18 @@ module ApplicationHelper
   end
 
   def terms_path
-    'https://cartodb.com/terms'
+    'https://carto.com/terms'
   end
 
   def privacy_path
-    'https://cartodb.com/privacy'
+    'https://carto.com/privacy'
   end
 
   def vis_json_url(vis_id, context, user=nil)
     "#{ CartoDB.url(context, 'api_v2_visualizations_vizjson', { id: vis_id }, user).sub(/(http:|https:)/i, '') }.json"
   end
 
-  #if cartodb_com_hosted is false, means that it is SaaS. If it's true (or doesn't exist), it's a custom installation
-  def cartodb_onpremise_version
-    Cartodb.config[:onpremise_version]
-  end
-
-  # Wraps a JSON object to be loaded as a JS object in a safe way.
-  #
-  # @example expected usage (my-template.erb), illustrated with a Visualization object
-  #   <script>
-  #     var vizdata = <%= safe_js_object vis.to_vizjson.to_json %>;
-  #   </script>
-  #
-  # @return string
-  def safe_js_object(obj)
-    # see http://api.rubyonrails.org/v3.2.21/classes/ERB/Util.html#method-c-j
-    raw "JSON.parse('#{ j(obj.html_safe) }')"
+  def model_errors(model)
+    model.errors.full_messages.map(&:capitalize).join(', ') if model.errors.present?
   end
 end
