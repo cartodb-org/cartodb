@@ -64,4 +64,3 @@ doc/manual/build
 .byebug_history
 /tags
 /.tags_swap
-app/assets/stylesheets/old_common
