@@ -34,7 +34,9 @@ class CommonDataRedisCache
 
   def invalidate
     keys = redis.keys("common_data:request:*")
-    redis.del keys
+    if !keys.empty?
+      redis.del keys
+    end
   rescue Redis::BaseError => exception
     CartoDB.notify_exception(exception)
     nil

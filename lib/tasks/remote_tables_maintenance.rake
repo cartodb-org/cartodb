@@ -89,6 +89,65 @@ namespace :cartodb do
       end
     end
 
+    desc "Initialize Visualization Categories"
+    task :init_dataset_categories => [:environment] do
+      forced_reset = ENV['forced_reset'] == "true"
+
+      if forced_reset
+        puts "Initializing with forced_reset"
+        Rails::Sequel.connection.run("ALTER TABLE visualizations DROP CONSTRAINT visualizations_category_fkey;")
+        Rails::Sequel.connection.run("DELETE FROM visualization_categories;")
+        Rails::Sequel.connection.run("ALTER SEQUENCE visualization_categories_id_seq RESTART;")
+        Rails::Sequel.connection.run("UPDATE visualization_categories SET id=DEFAULT;")
+      end
+
+      Rails::Sequel.connection.run("INSERT INTO visualization_categories (id, type, name, parent_id, list_order) VALUES
+          (-1, 1, 'UNASSIGNED', 0, 0),
+          (0, 1, 'ROOT', 0, 0),
+
+          (1, 1, 'Datasets', 0, 0),
+          (2, 2, 'Maps', 0, 1),
+
+          (3, 1, 'Energy', 1, 0),
+          (4, 1, 'Vessels', 1, 0),
+          (5, 1, 'Environmental', 1, 0),
+          (6, 1, 'Banking', 1, 0),
+          (7, 1, 'Retail', 1, 0),
+          (8, 1, 'Points of Interest', 1, 0),
+          (9, 1, 'Administrative', 1, 0),
+          (10, 1, 'Political', 1, 0),
+          (11, 1, 'Infrastructure', 1, 0),
+          (12, 1, 'Communications', 1, 0),
+
+          (13, 1, 'Exploration', 3, 0),
+          (14, 1, 'Renewable Energy', 3, 0),
+          (15, 1, 'Coal', 3, 0),
+          (16, 1, 'Natural Gas', 3, 0),
+          (17, 1, 'Oil', 3, 0),
+          (18, 1, 'Regions', 3, 0),
+          (19, 1, 'Agriculture', 3, 0),
+          (20, 1, 'Power', 3, 0),
+          (21, 1, 'Metals', 3, 0),
+
+          (22, 1, 'Natural Disasters', 5, 0),
+          (23, 1, 'Climate', 5, 0),
+          (24, 1, 'Administration', 5, 0),
+          (25, 1, 'Weather', 5, 0),
+
+          (26, 1, 'Global', 9, 0),
+          (27, 1, 'Oceana', 9, 0),
+          (28, 1, 'Asia', 9, 0),
+          (29, 1, 'South America', 9, 0),
+          (30, 1, 'Europe', 9, 0),
+          (31, 1, 'North America', 9, 0);
+      ")
+
+      if forced_reset
+        Rails::Sequel.connection.run("ALTER TABLE visualizations ADD CONSTRAINT visualizations_category_fkey
+            FOREIGN KEY (category) REFERENCES visualization_categories(id);")
+      end
+    end
+
     desc "Sync category set in Data Library for all datasets to all users"
     task :sync_dataset_categories => [:environment] do
       require_relative '../../app/helpers/common_data_redis_cache'
