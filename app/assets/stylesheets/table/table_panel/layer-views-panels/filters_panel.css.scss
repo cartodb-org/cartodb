@@ -21,6 +21,7 @@
 
   div.filters_panel {
     width:100%;
+    overflow-x: hidden;
     @include box-sizing(border-box);
 
     h3 { padding-left:30px; }
