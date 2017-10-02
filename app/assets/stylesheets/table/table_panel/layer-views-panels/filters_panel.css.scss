@@ -105,7 +105,7 @@
       .jspCap { display: none; }
       .jspTrack { background: none; position: relative; }
       .jspDrag { background: rgba(#BBB, .5); @include border-radius(5px); position: relative; top: 0; left: 0; cursor: pointer; }
-      .jspArrow { background: none; text-indent: -20000px; display: block; cursor: pointer; }
+      .jspArrow { background: none; text-indent: -20000px; display: block; cursor: default; }
       .jspVerticalBar .jspArrow { height: 10px; }
       .jspVerticalBar .jspArrow:focus { outline: none; }
       .jspCorner { background: #eeeef4; float: left; height: 100%; }
@@ -125,7 +125,6 @@
 
       a {
         float:right;
-        
         text-decoration: none;
       }
     }
@@ -196,7 +195,7 @@
           transition: background 0.4s;
         }
         input.filterInput.x { background-position: right 5px center; }
-        input.filterInput.x { cursor: pointer; }
+        input.filterInput.x { cursor: default; }
         input.filterInput.x::-ms-clear {display: none; width:0; height:0;}
 
         .filterSelectViewOptions {
@@ -206,7 +205,16 @@
              margin: 0;
           }
         }
-
+        a.select_all, a.reset {
+          float:left;
+        }
+        a.sort-high-low, a.sort-a-z, a.sort-default{
+          float:right;
+        }
+        .items {
+          display: block !important;
+          cursor: default
+        }
         .header {
           position:relative;
           margin: 0;
@@ -229,11 +237,20 @@
           .min, .max {
             width: 150px;
           }
+          a.toggleButton {
+            float:left;
+            margin-right:3px;
+          }
+          p.filterCount {
+            display:inline; 
+            cursor: default
+          }
         }
 
         &.date .range, .range-number { clear:both; margin: 6px 0 0 0; }
 
-        &:hover .remove { @include opacity(1); }
+        &:hover .remove { @include opacity(1); 
+          cursor: default;}
 
         .remove {
           float: right; 
@@ -409,7 +426,7 @@
             @include inline-block();
             
             color:#999999;
-            cursor: pointer;
+            cursor: default;
           }
         }
 
@@ -504,7 +521,7 @@
           margin: 0;
 
           &:hover {
-            cursor: pointer;
+            cursor: default;
           }
 
           p {
@@ -589,7 +606,7 @@
       .range-text:hover {
         padding: 0 2px 0 2px;
         border: solid thin #666;
-        cursor: pointer;
+        cursor: default;
       }
 
       .range-date-text {
@@ -600,7 +617,7 @@
       .range-date-text:hover {
         padding: 0 2px 0 2px;
         border: solid thin #666;
-        cursor: pointer;
+        cursor: default;
       }
 
       .date-min, .date-max {
