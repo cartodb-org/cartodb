@@ -21,7 +21,7 @@ $bannedColor: #E1A7A5;
   position: relative;
   @include display-flex();
   border: 1px solid transparent;
-  border-bottom: 1px solid $DarkGrey8;
+  border-bottom: 1px solid $nGrey17;
   padding: 6px;
 }
 .DatasetsList-item--selectable:hover,

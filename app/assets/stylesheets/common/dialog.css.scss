@@ -15,7 +15,7 @@ body.is-inDialog {
   width: 100%;
   height: 100%;
   z-index: 50;
-  background-color: $DarkGrey6;
+  background-color: $nGrey16;
 }
 
 .Dialog-contentWrapper { // this is necessary since the Dialog element might have `position: block` set by .hide/.show
@@ -133,7 +133,7 @@ body.is-inDialog {
   position: fixed;
   bottom: 100px; // to be located on top of the .Dialog-footer
   left: 0;
-  background: $Grey6;
+  background: $nGrey8;
   z-index: 3;
   // Make the item not go all the way to the edge, since that would cover the scrollbar…
   // Make margins on both sides to accomodate this
@@ -359,7 +359,7 @@ $sNarrower-width: 620px;
     width: 80%;
     height: 80%;
     background-color: $Black;
-    border: 2px solid $Grey6;
+    border: 2px solid $nGrey8;
   }
 
   .Dialog-body {
@@ -380,7 +380,7 @@ $sNarrower-width: 620px;
     width: 100%;
     min-height: 50px;
     height: 50px;
-    background: $DarkGrey6;
+    background: $nGrey16;
     padding: 10px 10px 10px 20px;
 
     .CreateDialog-footerActions {

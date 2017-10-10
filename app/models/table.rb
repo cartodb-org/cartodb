@@ -195,6 +195,11 @@ class Table
   # it also needs the user used to search a table when the
   # name is not qualified
   def self.get_all_by_names(names, viewer_user)
+    if (!viewer_user)
+      CartoDB::Logger.error(message:"user doesn't exist")
+      return []
+    end
+
     names.map { |t|
       user_id = viewer_user.id
       table_name, table_schema = Table.table_and_schema(t)
@@ -210,6 +215,11 @@ class Table
 
   # TODO: REFACTOR THIS patch introduced to continue with #3664
   def self.get_all_user_tables_by_names(names, viewer_user)
+    if (!viewer_user)
+      CartoDB::Logger.error(message:"user doesn't exist")
+      return []
+    end
+
     names.map { |t|
       user_id = viewer_user.id
       table_name, table_schema = Table.table_and_schema(t)
@@ -537,7 +547,7 @@ class Table
       kind:         kind,
       exportable:   esv.nil? ? true : esv.exportable,
       export_geom:  esv.nil? ? true : esv.export_geom,
-      category:     esv.nil? ? -1 : esv.category
+      category:     esv.nil? ? nil : esv.category
     )
 
     member.store
@@ -1463,6 +1473,14 @@ class Table
     existing_names = []
     existing_names = options[:name_candidates] || options[:connection]["select relname from pg_stat_user_tables WHERE schemaname='#{database_schema}'"].map(:relname) if options[:connection]
     existing_names = existing_names + SYSTEM_TABLE_NAMES
+
+    common_data_username = Cartodb.get_config(:common_data, 'username')
+    common_data_user = Carto::User.find_by_username(common_data_username)
+    if common_data_user
+      lib_names = common_data_user.visualizations.where(type: 'table', privacy: 'public').select(:name).map { |row| row.name }
+      existing_names += lib_names
+    end
+
     rx = /_(\d+)$/
     count = name[rx][1].to_i rescue 0
     while existing_names.include?(name)

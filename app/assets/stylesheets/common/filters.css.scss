@@ -27,7 +27,7 @@
 // Moved with scroll behaviour
 .Filters.is-fixed {
   position: fixed;
-  background: $DarkGrey8;
+  background: $nGrey17;
   border-bottom: 1px solid $Black;
 }
 .Filters.with-long-separator {
@@ -97,9 +97,9 @@
   &:first-child { margin-left: 0 }
   &:last-child { margin-right: 0 }
   .Filters-typeLink {
-	color: $Grey7;
+	color: $nGrey9;
 	&:hover {
-	color: $Grey2;
+	color: $nGrey4;
 	}
 	&.js-create_empty{ 
 		@include actionButton;
@@ -132,7 +132,7 @@
   padding-right: 2px;
   font-size: 14px;
   line-height: 40px;
-  color: $Grey7;
+  color: $nGrey9;
   background: transparent;
   border: none;
   outline: none;
@@ -155,7 +155,7 @@
   margin-left: 1px;
 
 }
-.Filters-searchLink:hover { color: $Grey6  }
+.Filters-searchLink:hover { color: $nGrey16  }
 .Filters-searchItem {
   display:none;
   margin-right:0;
@@ -175,7 +175,7 @@
   outline:none;
   border:none;
   background:none;
-  color: $Amber1;
+  color: $nAmber5;
   font-size: $sFontSize-large;
   font-weight: $sFontWeight-lighter;
 }
@@ -223,13 +223,13 @@ a.Filters-cleanSearch { line-height:32px }
   display: inline-block;
   line-height: 40px;
   font-size: 14px;
-  color: $Teal4;
+  color: $nTeal7;
   background: transparent;
   border: none;
   outline: none;
 
   &:hover {
-    color: $Teal1;
+    color: $nTeal4;
     text-decoration: none;
   }
 }
@@ -241,7 +241,7 @@ a.Filters-cleanSearch { line-height:32px }
   }
 }
 .Filters-typeLink.is-selected {
-  color:$Grey1;;
+  color:$nGrey1;;
 
   &:before {
     content:'';
@@ -276,9 +276,9 @@ a.Filters-cleanSearch { line-height:32px }
 .Filters-orderLink {
   @include inline-block();
   font-size: 19px;
-  color: $Grey7;
+  color: $nGrey9;
   line-height:19px;
-  &:hover { color: $Grey2; }
+  &:hover { color: $nGrey4; }
 }
 .Filters-orderLink.is-selected {
   color:$SelectionBlue1;
@@ -304,7 +304,7 @@ a.Filters-cleanSearch { line-height:32px }
 .Filters-actionsText {
   padding-left: 15px;
   font-size: 13px;
-  color: $Red1;
+  color: $nRed4;
 }
 .Filters-actionsLink {
   display: inline-block;

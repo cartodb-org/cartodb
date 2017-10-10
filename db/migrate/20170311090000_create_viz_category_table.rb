@@ -9,6 +9,8 @@ Sequel.migration do
         );"
     execute "COMMENT ON COLUMN visualization_categories.type IS '1: dataset, 2: map';"
     execute "CREATE INDEX parent_id_idx ON visualization_categories (parent_id);"
+    execute "INSERT INTO visualization_categories (id, type, name, parent_id, list_order) VALUES 
+        (-1, 1, 'UNASSIGNED', 0, 0);"
 
     execute "CREATE OR REPLACE FUNCTION get_viz_child_category_ids(category_id integer)
       RETURNS integer[] AS $$

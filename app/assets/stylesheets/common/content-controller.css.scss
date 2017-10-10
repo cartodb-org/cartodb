@@ -18,7 +18,7 @@
   margin-left: 5px;
 
   .ContentList {
-    background-color: $DarkGrey9;
+    background-color: $nGrey18;
     height: calc(100% - 25px);
     flex: 1 1 auto;
     .ContentListContainer {
@@ -28,8 +28,10 @@
       }
     }
     .found-sub {
-      font-weight: bold;
-      color: $Grey1;
+      border-radius: 2px;
+      background: $nYellow5;
+      color: $Black;      
+      padding: 0px 2px;
     }
     &.is-hidden {
       display: none;

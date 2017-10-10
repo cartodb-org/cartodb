@@ -1,5 +1,5 @@
 Sequel.migration do
-  change do
+  up do
     alter_table :users do
       set_column_default :geocoding_block_price, 0
     end

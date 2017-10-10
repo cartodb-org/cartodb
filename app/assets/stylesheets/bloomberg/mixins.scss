@@ -1,19 +1,28 @@
+//color buttons
+@mixin colorButton($bg_default, $bg_hover, $bg_pressed, $bg_disabled) {
+  color: $nGrey1;
+  background: $bg_default;
+
+  &:hover {
+   background: $bg_hover;
+
+  }
+
+  &.blp-button-pressed, &:active {    
+    background: $bg_pressed;
+  }
+
+  &.disabled {
+    color: $nGrey8;
+    background: $bg_disabled;
+  }
+}
+
+
 //Buttons 
 @mixin actionButton {
-  background-color: $Teal5;
-  border: 1px solid $Black;
-  border-radius: 2px;
-  color: $Grey1;
-  -webkit-user-select: none;
-  &:hover {
-    background-color: $Teal3;
-    color: white;
-  }
-  &:active {
-    background-color: $Teal7;
-    color: white;
-    } 
-  }
+    @include colorButton($nTeal7, $nTeal6, $nTeal8, #456d71);
+}
 
 //bloomberg theme 
 //button 
@@ -23,9 +32,10 @@
     background-position: center;
     border: 1px solid $Black;
     border-radius: 2px;
-    color: $Grey1; 
+    color: $nGrey1; 
     cursor: default;
     font-size: 13px;
+    font-family: AvenirNext_demi;
     height: 19px;
     line-height: 17px;
     padding: 0px 6px;
@@ -35,7 +45,7 @@
 
       &:hover {
         background-color: $btn_background_hover;
-        color: $Grey1;
+        color: $nGrey1;
         cursor: default;
 
       }
@@ -47,13 +57,13 @@
 
       &.disabled, &:disabled:hover {
         background-color: $btn_background_disabled;
-        color: $Grey1;
+        color: $nGrey1;
       }
  }
 
 //Entry style
  @mixin bb_entry_style {
-    background-color: $Amber1;
+    background-color: $nAmber5;
     border: 1px solid $Black;
     border-radius: 2px;
     color: $Black;
@@ -75,7 +85,7 @@
 
  //dropdown list
  @mixin bb_dropdown {
-    background: $DarkGrey7;
+    background: $nGrey16;
     border: $dropdownBorder;
     padding: 12px 0px;
  }
@@ -86,7 +96,7 @@
 //sidebar layer header
 @mixin bb_sidebar_layer_header {
     background-color: $layer_header_background;
-    border-bottom: 1px solid $DarkGrey8;
+    border-bottom: 1px solid $nGrey17;
     font-size: 15px;
     font-family: "AvenirNext_regular";
     height: 30px;

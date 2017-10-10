@@ -13,7 +13,7 @@ $cHeader-dark:  rgba(#3A91D7, 1);
   display: block;
   width: 100%;
   height: 30px;
-  background-color: $DarkGrey6;
+  background-color: $nGrey16;
   height: 40px;
 }
 .Header-inner {
@@ -58,12 +58,19 @@ $cHeader-dark:  rgba(#3A91D7, 1);
   display: flex;
 }
 .Header-navigationToggleItem {
-  background: #444444;
+  background: $nGrey13;
+  font-family: AvenirNext_demi;
   padding: 0;
   width: 50%;
   display: inline-block;
   text-align: center;
   border: 1px solid #000000;
+  &:hover {
+    background-color: $btn_background_hover;
+    color: $nGrey1;
+    cursor: default;
+
+  }
   &.selected {
     background: #005AB5;
     color: white;
@@ -73,7 +80,7 @@ $cHeader-dark:  rgba(#3A91D7, 1);
   }
   & a {
     padding: 3px 0 3px 0;
-    color: #d8d8d8;
+    color: $nGrey4;
     display: block;
     width: 100%;
   }

@@ -26,7 +26,6 @@ class Admin::VisualizationsController < Admin::AdminController
   before_filter :link_ghost_tables, only: [:index]
   before_filter :user_metadata_propagation, only: [:index]
   before_filter :get_viewed_user, only: [:public_map, :public_table]
-  before_filter :load_common_data, only: [:index]
 
   before_filter :resolve_visualization_and_table, only: [:show, :public_table, :public_map,
                                                          :show_organization_public_map, :show_organization_embed_map,

@@ -80,7 +80,7 @@ module CartoDB
       attribute :legend_style,        String, default: ''
       attribute :exportable,          Boolean, default: true
       attribute :export_geom,         Boolean, default: true
-      attribute :category,            Integer, default: -1
+      attribute :category,            Integer, default: nil
       attribute :parent_id,           String, default: nil
       attribute :kind,                String, default: KIND_GEOM
       attribute :prev_id,             String, default: nil
@@ -753,6 +753,12 @@ module CartoDB
       end
 
       def do_store(propagate_changes = true, table_privacy_changed = false)
+        if (!user) 
+          CartoDB::Logger.error(message:
+                                "user doesn't exist for visualization ", visualization: self)
+          return self
+        end
+
         if password_protected?
           raise CartoDB::InvalidMember.new('No password set and required') unless has_password?
         else

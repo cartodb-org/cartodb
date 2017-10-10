@@ -2,12 +2,12 @@
 
 // Paragraphs
 $cTypography-headers:             rgba(#333, 1);
-$cTypography-paragraphs:          $Grey2;
-$cTypography-secondary:           $Grey7;
+$cTypography-paragraphs:          $nGrey4;
+$cTypography-secondary:           $nGrey9;
 $cTypography-help:                rgba(#CCC, 1); // Help text & tips
 $cTypography-headersOverBlack:    rgba(#FFF, 1);
-$cTypography-link:                $Teal2;
-$cTypography-linkHover:           $Teal1;
+$cTypography-link:                $nTeal6;
+$cTypography-linkHover:           $nTeal4;
 $cTypography-linkSelected:        rgba(#333, 1);
 $cTypography-labels:              rgba(#424242, 1);
 $cTypography-linkSecondary:       rgba(#979EA1, 1);
@@ -45,7 +45,7 @@ $cIcons-active:  rgba(#666, 1); // Active & hover
 $cForms-border: rgba(#CCC, 1);
 
 // Lateral nav buttons
-$cNavButton-default: $Grey2;
+$cNavButton-default: $nGrey4;
 $cNavButton-active: $White;
 
 // Navmenu

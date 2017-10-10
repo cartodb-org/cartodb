@@ -320,6 +320,15 @@ class ApplicationController < ActionController::Base
     super(CartoDB.extract_subdomain(request))
   end
 
+  def common_data_user
+    return @common_data_user if @common_data_user
+
+    common_data_config = Cartodb.config[:common_data]
+    username = common_data_config && common_data_config['username']
+
+    @common_data_user = Carto::User.find_by_username(username)
+  end
+
   # current_user relies on request subdomain ALWAYS, so current_viewer will always return:
   # - If subdomain is present in the sessions: subdomain-based session (aka current_user)
   # - Else: the first session found at request.session that comes from warden

@@ -8,7 +8,7 @@
   height: 100%;
   width: 200px;
   border-right: 1px solid $Black;
-  background-color: $DarkGrey6;
+  background-color: $nGrey17;
 } 
 
 .LeftMenuScrollable {
@@ -20,7 +20,7 @@
   .MenuItem {
     cursor:pointer;
     padding: 0px 12px;
-    color: $Grey3;
+    color: $nGrey6;
     line-height: 23px;
     &:hover {
       background-color: #292929;
@@ -95,11 +95,11 @@
 .blp-navigator-item {
   cursor: pointer;
   padding: 0px 12px;
-  color: $Grey3;
+  color: $nGrey6;
   line-height: 23px;
 
   &:hover {
-    background-color: $DarkGrey3;
+    background-color: $nGrey14;
   }
 
 
