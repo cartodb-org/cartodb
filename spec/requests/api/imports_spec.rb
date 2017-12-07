@@ -11,7 +11,7 @@ describe "Imports API" do
   before(:each) do
     bypass_named_maps
     delete_user_data @user
-    host! "#{@user.username}.localhost.lan"
+    host! "localhost/user/#{@user.username}"
   end
 
   after(:all) do
