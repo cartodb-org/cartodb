@@ -7,7 +7,7 @@ describe "Geocodings API" do
     @user = FactoryGirl.create(:valid_user, table_quota: 50)
 
     delete_user_data @user
-    host! "#{@user.username}.localhost.lan"
+    host! "localhost/user/#{@user.username}"
   end
 
   after(:all) do
