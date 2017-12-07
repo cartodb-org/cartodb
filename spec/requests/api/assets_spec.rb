@@ -12,7 +12,7 @@ describe "Assets API" do
     @user = FactoryGirl.create(:valid_user)
 
     delete_user_data @user
-    host! "#{@user.username}.localhost.lan"
+    host! "localhost/user/#{@user.username}"
   end
 
   after(:each) do
