@@ -52,7 +52,7 @@ describe Admin::VisualizationsController do
   before(:each) do
     bypass_named_maps
     delete_user_data @user
-    host! "localhost/user/#{@user.username}"
+    host! CartoDB.base_url(@user.username).sub!(/^https?\:\/\//, '')
   end
 
   describe 'GET /viz' do
@@ -74,14 +74,14 @@ describe Admin::VisualizationsController do
       id = factory.fetch('id')
       login_as(@user, scope: @user.username)
 
-      get public_visualizations_show_url({ id: id }), {}, @headers
+      get public_visualizations_show_url(id: id), {}, @headers
       last_response.status.should == 200
     end
 
     it 'redirects to the public view if visualization private' do
       id = factory.fetch('id')
 
-      get public_visualizations_show_url({ id: id }), {}, @headers
+      get public_visualizations_show_url(id: id), {}, @headers
       follow_redirect!
       last_request.path.should =~ %r{/viz/}
     end
@@ -89,7 +89,7 @@ describe Admin::VisualizationsController do
     it 'keeps the base path (table|visualization) when redirecting' do
       id = table_factory.id
 
-      get public_tables_show_bis_url({ id: id }), {}, @headers
+      get public_tables_show_bis_url(id: id), {}, @headers
       follow_redirect!
       last_request.path.should =~ %r{/tables/}
     end
@@ -104,7 +104,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(true)
 
           login_as(@user, scope: @user.username)
-          get public_tables_show_bis_url({ id: @id }), {}, @headers
+          get public_tables_show_bis_url(id: @id), {}, @headers
           last_response.status.should eq 302
           follow_redirect!
           last_request.path.should =~ %r{/dataset/}
@@ -115,7 +115,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(false)
 
           login_as(@user, scope: @user.username)
-          get public_tables_show_bis_url({ id: @id }), {}, @headers
+          get public_tables_show_bis_url(id: @id), {}, @headers
           last_response.status.should eq 200
         end
 
@@ -124,7 +124,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(false)
 
           login_as(@user, scope: @user.username)
-          get public_tables_show_bis_url({ id: @id }), {}, @headers
+          get public_tables_show_bis_url(id: @id), {}, @headers
           last_response.status.should eq 200
         end
       end
@@ -138,7 +138,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(true)
 
           login_as(@user, scope: @user.username)
-          get public_visualizations_show_url({ id: @id }), {}, @headers
+          get public_visualizations_show_url(id: @id), {}, @headers
           last_response.status.should eq 302
           follow_redirect!
           last_request.path.should =~ %r{/builder/}
@@ -149,7 +149,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(false)
 
           login_as(@user, scope: @user.username)
-          get public_visualizations_show_url({ id: @id }), {}, @headers
+          get public_visualizations_show_url(id: @id), {}, @headers
           last_response.status.should eq 200
         end
 
@@ -158,7 +158,7 @@ describe Admin::VisualizationsController do
           @user.stubs(:builder_enabled?).returns(false)
 
           login_as(@user, scope: @user.username)
-          get public_visualizations_show_url({ id: @id }), {}, @headers
+          get public_visualizations_show_url(id: @id), {}, @headers
           last_response.status.should eq 200
         end
 
@@ -210,7 +210,7 @@ describe Admin::VisualizationsController do
     it 'returns 404 for private tables' do
       id = table_factory(privacy: ::UserTable::PRIVACY_PRIVATE).id
 
-      get public_table_table_url({ id: id }), {}, @headers
+      get public_table_table_url(id: id), {}, @headers
       last_response.status.should == 404
     end
   end
@@ -259,7 +259,7 @@ describe Admin::VisualizationsController do
 
       vis_id = new_table({user_id: user_a.id, privacy: ::UserTable::PRIVACY_PUBLIC}).save.reload.table_visualization.id
 
-      host! "localhost/user/#{org.name}"
+      host! CartoDB.base_url(org.name).sub!(/^https?\:\/\//, '')
       get public_visualizations_public_map_url(id: vis_id), @headers
       last_response.status.should == 200
     end
@@ -334,7 +334,7 @@ describe Admin::VisualizationsController do
 
   describe 'GET /tables/:id/embed_map' do
     it 'returns 404 for nonexisting tables when table name is used' do
-      get public_tables_embed_map_url(id: "tablethatdoesntexist"), {}, @headers
+      get public_tables_embed_map_url(id: 'tablethatdoesntexist'), {}, @headers
       last_response.status.should == 404
     end
   end
@@ -356,7 +356,7 @@ describe Admin::VisualizationsController do
 
     it 'renders embed map error page if visualization private' do
       table = table_factory
-      put api_v1_tables_show_url({ id: table.id, api_key: @api_key}),
+      put api_v1_tables_update_url(id: table.id, api_key: @api_key),
         { privacy: 0 }.to_json, @headers
 
       name = table.table_visualization.name
@@ -372,7 +372,7 @@ describe Admin::VisualizationsController do
     it 'renders embed map error when an exception is raised' do
       login_as(@user, scope: @user.username)
 
-      get public_visualizations_embed_map_url(id: "220d2f46-b371-11e4-93f7-080027880ca6"), {}, @headers
+      get public_visualizations_embed_map_url(id: '220d2f46-b371-11e4-93f7-080027880ca6'), {}, @headers
       last_response.status.should == 404
     end
 
@@ -441,16 +441,13 @@ describe Admin::VisualizationsController do
     it 'returns 404' do
       login_as(@user, scope: @user.username)
 
-      get public_visualizations_show_url(id: "220d2f46-b371-11e4-93f7-080027880ca6", api_key: @api_key), {}, @headers
+      get public_visualizations_show_url(id: '220d2f46-b371-11e4-93f7-080027880ca6', api_key: @api_key), {}, @headers
       last_response.status.should == 404
 
-      # Need to create the public url...but public_visualizations_url 
-      # is also used for /viz which leads to the wrong url to be generated
-      url = public_visualizations_show_url(id: "220d2f46-b371-11e4-93f7-080027880ca6") + "/public?api_key=#{@api_key}"
-      get url, {}, @headers
+      get public_visualization_url(id: '220d2f46-b371-11e4-93f7-080027880ca6', api_key: @api_key), {}, @headers
       last_response.status.should == 404
 
-      get public_visualizations_embed_map_url(id: "220d2f46-b371-11e4-93f7-080027880ca6", api_key: @api_key), {}, @headers
+      get public_visualizations_embed_map_url(id: '220d2f46-b371-11e4-93f7-080027880ca6', api_key: @api_key), {}, @headers
       last_response.status.should == 404
     end
   end # non existent visualization
@@ -521,7 +518,6 @@ describe Admin::VisualizationsController do
 
       login_host(user_b, org)
 
-      puts CartoDB.url(@mock_context, 'public_table', { id: vis.name }, user_a)
       get CartoDB.url(@mock_context, 'public_table', { id: vis.name }, user_a)
       last_response.status.should be(404)
 
@@ -700,7 +696,7 @@ describe Admin::VisualizationsController do
 
   def login_host(user, org = nil)
     login_as(user, scope: user.username)
-    host! "localhost/user/#{org.nil? ? user.username : org.name}"
+    host! CartoDB.base_url(org.nil? ? user.username : org.name).sub!(/^https?\:\/\//, '')
   end
 
   def follow_redirects(limit = 10)
@@ -720,10 +716,9 @@ describe Admin::VisualizationsController do
       type:         'derived'
     }
 
-    with_host "localhost/user/#{owner.username}" do
-      post api_v1_visualizations_index_url({ api_key: owner.api_key }), payload.to_json
+    with_host CartoDB.base_url(owner.username).sub!(/^https?\:\/\//, '') do
+      post api_v1_visualizations_create_url(api_key: owner.api_key), payload.to_json
     end
-
 
     JSON.parse(last_response.body)
   end
