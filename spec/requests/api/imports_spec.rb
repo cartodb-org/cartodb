@@ -11,7 +11,7 @@ describe "Imports API" do
   before(:each) do
     bypass_named_maps
     delete_user_data @user
-    host! "#{@user.username}.localhost.lan"
+    host! CartoDB.base_url(@user.username).sub!(/^https?\:\/\//, '')
   end
 
   after(:all) do
