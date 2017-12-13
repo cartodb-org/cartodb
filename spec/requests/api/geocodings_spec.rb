@@ -7,7 +7,7 @@ describe "Geocodings API" do
     @user = FactoryGirl.create(:valid_user, table_quota: 50)
 
     delete_user_data @user
-    host! "#{@user.username}.localhost.lan"
+    host! CartoDB.base_url(@user.username).sub!(/^https?\:\/\//, '')
   end
 
   after(:all) do
