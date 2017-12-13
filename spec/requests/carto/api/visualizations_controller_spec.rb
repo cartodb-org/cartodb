@@ -159,7 +159,7 @@ describe Carto::Api::VisualizationsController do
       @table1 = create_random_table(@user_1)
 
       @headers = { 'CONTENT_TYPE' => 'application/json' }
-      host! "#{@user_1.subdomain}.localhost.lan"
+      host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
     end
 
     after(:all) do
@@ -299,7 +299,7 @@ describe Carto::Api::VisualizationsController do
     before(:each) do
       login(@user_1)
       @headers = { 'CONTENT_TYPE' => 'application/json' }
-      host! "#{@user_1.subdomain}.localhost.lan"
+      host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
     end
 
     after(:each) do
@@ -390,7 +390,7 @@ describe Carto::Api::VisualizationsController do
       @headers = {
         'CONTENT_TYPE' => 'application/json'
       }
-      host! "#{@user_1.username}.localhost.lan"
+      host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
     end
 
     after(:all) do
@@ -982,14 +982,15 @@ describe Carto::Api::VisualizationsController do
       before(:each) do
         bypass_named_maps
         delete_user_data(@user_1)
+        host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
       end
 
       it 'retrieves a collection of visualizations' do
         payload = factory(@user_1)
-        post api_v1_visualizations_create_url(api_key: @api_key), payload.to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key), payload.to_json, @headers
         id = JSON.parse(last_response.body).fetch('id')
 
-        get api_v1_visualizations_index_url(api_key: @api_key),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
           {}, @headers
 
         response    = JSON.parse(last_response.body)
@@ -999,10 +1000,10 @@ describe Carto::Api::VisualizationsController do
 
       it 'is updated after creating a visualization' do
         payload = factory(@user_1)
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           payload.to_json, @headers
 
-        get api_v1_visualizations_index_url(api_key: @api_key),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
           {}, @headers
 
         response    = JSON.parse(last_response.body)
@@ -1010,10 +1011,10 @@ describe Carto::Api::VisualizationsController do
         collection.size.should == 1
 
         payload = factory(@user_1).merge('name' => 'another one')
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           payload.to_json, @headers
 
-        get api_v1_visualizations_index_url(api_key: @api_key),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
           {}, @headers
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
@@ -1022,20 +1023,20 @@ describe Carto::Api::VisualizationsController do
 
       it 'is updated after deleting a visualization' do
         payload = factory(@user_1)
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           payload.to_json, @headers
         id = JSON.parse(last_response.body).fetch('id')
 
-        get api_v1_visualizations_index_url(api_key: @api_key),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
           {}, @headers
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
         collection.should_not be_empty
 
-        delete api_v1_visualizations_destroy_url(id: id, api_key: @api_key),
+        delete api_v1_visualizations_destroy_url(user_domain: @user_1.username, id: id, api_key: @api_key),
                { id: id }.to_json,
                @headers
-        get api_v1_visualizations_index_url(api_key: @api_key),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
           {}, @headers
 
         response    = JSON.parse(last_response.body)
@@ -1048,11 +1049,11 @@ describe Carto::Api::VisualizationsController do
         total_entries = 20
 
         total_entries.times do
-          post api_v1_visualizations_index_url(api_key: @api_key),
+          post api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key),
             factory(@user_1).to_json, @headers
         end
 
-        get api_v1_visualizations_index_url(api_key: @api_key, page: 1, per_page: per_page), {}, @headers
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, page: 1, per_page: per_page), {}, @headers
 
         last_response.status.should == 200
 
@@ -1063,21 +1064,21 @@ describe Carto::Api::VisualizationsController do
       end
 
       it 'returns filtered results' do
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           factory(@user_1).to_json, @headers
 
-        get api_v1_visualizations_index_url(api_key: @api_key, type: 'table'),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, type: 'table'),
           {}, @headers
         last_response.status.should == 200
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
         collection.should be_empty
 
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           factory(@user_1).to_json, @headers
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
           factory(@user_1).merge(type: 'table').to_json, @headers
-        get api_v1_visualizations_index_url(api_key: @api_key, type: 'derived'),
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, type: 'derived'),
           {}, @headers
 
         last_response.status.should == 200
@@ -1102,7 +1103,7 @@ describe Carto::Api::VisualizationsController do
           privacy: 'public'
         }
 
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
               payload.to_json, @headers
         last_response.status.should == 200
 
@@ -1113,13 +1114,13 @@ describe Carto::Api::VisualizationsController do
         #  {}, @headers
         #last_response.status.should == 403
 
-        get api_v2_visualizations_vizjson_url(id: visualization.fetch('id'), api_key: @api_key),
+        get api_v2_visualizations_vizjson_url(user_domain: @user_1.username, id: visualization.fetch('id'), api_key: @api_key),
           {}, @headers
         last_response.status.should == 200
 
         # include overlays
 
-        get overlays_url(visualization_id: visualization.fetch('id'), api_key: @api_key),
+        get overlays_url(user_domain: @user_1.username, visualization_id: visualization.fetch('id'), api_key: @api_key),
           {}, @headers
         last_response.status.should == 200
         overlays = JSON.parse(last_response.body)
@@ -1137,11 +1138,11 @@ describe Carto::Api::VisualizationsController do
 
       it 'returns a visualization' do
         payload = factory(@user_1)
-        post api_v1_visualizations_create_url(api_key: @api_key),
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key),
         payload.to_json, @headers
         id = JSON.parse(last_response.body).fetch('id')
 
-        get api_v1_visualizations_show_url(id: id, api_key: @api_key), {}, @headers
+        get api_v1_visualizations_show_url(user_domain: @user_1.username, id: id, api_key: @api_key), {}, @headers
 
         last_response.status.should == 200
         response = JSON.parse(last_response.body)
@@ -1473,25 +1474,25 @@ describe Carto::Api::VisualizationsController do
       it 'uses locked filter' do
         bypass_named_maps
 
-        post api_v1_visualizations_create_url(api_key: @api_key), factory(@user_1, locked: true).to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key), factory(@user_1, locked: true).to_json, @headers
         vis_1_id = JSON.parse(last_response.body).fetch('id')
-        post api_v1_visualizations_create_url(api_key: @api_key), factory(@user_1, locked: false).to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key), factory(@user_1, locked: false).to_json, @headers
         vis_2_id = JSON.parse(last_response.body).fetch('id')
 
-        get api_v1_visualizations_index_url(api_key: @api_key, type: 'derived'), {}, @headers
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, type: 'derived'), {}, @headers
         last_response.status.should == 200
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
         collection.length.should eq 2
 
-        get api_v1_visualizations_index_url(api_key: @api_key, type: 'derived', locked: true), {}, @headers
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, type: 'derived', locked: true), {}, @headers
         last_response.status.should == 200
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
         collection.length.should eq 1
         collection.first.fetch('id').should eq vis_1_id
 
-        get api_v1_visualizations_index_url(api_key: @api_key, type: 'derived', locked: false), {}, @headers
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, type: 'derived', locked: false), {}, @headers
         last_response.status.should == 200
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
@@ -1500,11 +1501,11 @@ describe Carto::Api::VisualizationsController do
       end
 
       it 'searches by tag' do
-        post api_v1_visualizations_create_url(api_key: @api_key), factory(@user_1, locked: true, tags: ['test1']).to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key), factory(@user_1, locked: true, tags: ['test1']).to_json, @headers
         vis_1_id = JSON.parse(last_response.body).fetch('id')
-        post api_v1_visualizations_create_url(api_key: @api_key), factory(@user_1, locked: false, tags: ['test2']).to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.username, api_key: @api_key), factory(@user_1, locked: false, tags: ['test2']).to_json, @headers
 
-        get api_v1_visualizations_index_url(api_key: @api_key, tags: 'test1'), {}, @headers
+        get api_v1_visualizations_index_url(user_domain: @user_1.username, api_key: @api_key, tags: 'test1'), {}, @headers
         last_response.status.should == 200
         response    = JSON.parse(last_response.body)
         collection  = response.fetch('visualizations')
@@ -1516,13 +1517,13 @@ describe Carto::Api::VisualizationsController do
 
     describe 'non existent visualization' do
       it 'returns 404' do
-        get api_v1_visualizations_show_url(id: TEST_UUID, api_key: @api_key), {}, @headers
+        get api_v1_visualizations_show_url(user_domain: @user_1.username, id: TEST_UUID, api_key: @api_key), {}, @headers
         last_response.status.should == 404
 
-        put api_v1_visualizations_update_url(id: TEST_UUID, api_key: @api_key), { id: TEST_UUID }.to_json, @headers
+        put api_v1_visualizations_update_url(user_domain: @user_1.username, id: TEST_UUID, api_key: @api_key), { id: TEST_UUID }.to_json, @headers
         last_response.status.should == 404
 
-        delete api_v1_visualizations_destroy_url(id: TEST_UUID, api_key: @api_key), { id: TEST_UUID }.to_json, @headers
+        delete api_v1_visualizations_destroy_url(user_domain: @user_1.username, id: TEST_UUID, api_key: @api_key), { id: TEST_UUID }.to_json, @headers
         last_response.status.should == 404
       end
     end
@@ -1549,11 +1550,11 @@ describe Carto::Api::VisualizationsController do
         bypass_named_maps
 
         login(@user_1_1)
-        post api_v1_visualizations_create_url(api_key: @user_1_1.api_key), factory(@user_1_1, locked: true).to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1_1.username, api_key: @user_1_1.api_key), factory(@user_1_1, locked: true).to_json, @headers
         id = JSON.parse(last_response.body).fetch('id')
 
         login(@user_1_1)
-        get api_v1_visualizations_notify_watching_url(id: id, api_key: @user_1_1.api_key)
+        get api_v1_visualizations_notify_watching_url(user_domain: @user_1_1.username, id: id, api_key: @user_1_1.api_key)
         body = JSON.parse(last_response.body)
         body.should == []
       end
@@ -1578,7 +1579,7 @@ describe Carto::Api::VisualizationsController do
     end
 
     it 'orders remotes by size with external sources size' do
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'remote', display_name: 'visu1').to_json, @headers
       vis_1_id = JSON.parse(last_response.body).fetch('id')
       Carto::ExternalSource.new(
@@ -1587,7 +1588,7 @@ describe Carto::Api::VisualizationsController do
         rows_counted: 1,
         size: 100).save
 
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'remote', display_name: 'visu2').to_json, @headers
       vis_2_id = JSON.parse(last_response.body).fetch('id')
       Carto::ExternalSource.new(
@@ -1596,7 +1597,7 @@ describe Carto::Api::VisualizationsController do
         rows_counted: 1,
         size: 200).save
 
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'remote', display_name: 'visu3').to_json, @headers
       vis_3_id = JSON.parse(last_response.body).fetch('id')
       Carto::ExternalSource.new(
@@ -1604,7 +1605,7 @@ describe Carto::Api::VisualizationsController do
         import_url: 'http://www.fake.com',
         rows_counted: 1, size: 10).save
 
-      get api_v1_visualizations_index_url(api_key: @user.api_key, types: 'remote', order: 'size'), {}, @headers
+      get api_v1_visualizations_index_url(user_domain: @user.username, api_key: @user.api_key, types: 'remote', order: 'size'), {}, @headers
       last_response.status.should == 200
       response    = JSON.parse(last_response.body)
       collection  = response.fetch('visualizations')
@@ -1616,11 +1617,11 @@ describe Carto::Api::VisualizationsController do
 
     it 'mixed types search should filter only remote without display name' do
 
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'table').to_json, @headers
       vis_1_id = JSON.parse(last_response.body).fetch('id')
 
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'remote', name: 'visu2', display_name: 'visu2').to_json, @headers
       vis_2_id = JSON.parse(last_response.body).fetch('id')
       Carto::ExternalSource.new(
@@ -1629,7 +1630,7 @@ describe Carto::Api::VisualizationsController do
         rows_counted: 1,
         size: 200).save
 
-      post api_v1_visualizations_create_url(api_key: @user.api_key),
+      post api_v1_visualizations_create_url(user_domain: @user.username, api_key: @user.api_key),
            factory(@user, locked: true, type: 'remote', name: 'visu3').to_json, @headers
       vis_3_id = JSON.parse(last_response.body).fetch('id')
       Carto::ExternalSource.new(
@@ -1638,7 +1639,7 @@ describe Carto::Api::VisualizationsController do
         rows_counted: 1,
         size: 200).save
 
-      get api_v1_visualizations_index_url(api_key: @user.api_key, types: 'remote,table'), {}, @headers
+      get api_v1_visualizations_index_url(user_domain: @user.username, api_key: @user.api_key, types: 'remote,table'), {}, @headers
       last_response.status.should == 200
       response    = JSON.parse(last_response.body)
       collection  = response.fetch('visualizations')
@@ -1792,7 +1793,8 @@ describe Carto::Api::VisualizationsController do
         @vis = @table.table_visualization
         @vis.private?.should == true
 
-        @host = "#{@vis_owner.username}.localhost.lan"
+        #@host = "#{@vis_owner.username}.localhost.lan"
+        @host = CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
 
         @headers = http_json_headers
       end
@@ -1827,13 +1829,14 @@ describe Carto::Api::VisualizationsController do
         end
       end
 
-      it 'returns 200 if user at url is empty' do
-        ApplicationController.any_instance.stubs(:current_viewer).returns(@vis_owner)
-        login_as(@vis_owner, scope: @vis_owner.username)
-        get_json url(nil, @vis.id, @vis_owner.api_key), {}, @headers do |response|
-          response.status.should == 200
-        end
-      end
+      # BBG - cannot send url without an user
+      #it 'returns 200 if user at url is empty' do
+      #  ApplicationController.any_instance.stubs(:current_viewer).returns(@vis_owner)
+      #  login_as(@vis_owner, scope: @vis_owner.username)
+      #  get_json url(nil, @vis.id, @vis_owner.api_key), {}, @headers do |response|
+      #    response.status.should == 200
+      #  end
+      #end
 
       it 'returns 404 if user at url does not match visualization owner' do
         app = ApplicationController.any_instance
@@ -1924,24 +1927,26 @@ describe Carto::Api::VisualizationsController do
         end
       end
 
-      it 'returns 404 if user at url is empty' do
-        ApplicationController.any_instance.stubs(:current_viewer).returns(@shared_user)
-        login_as(@shared_user, scope: @shared_user.organization.name)
-        get_json url(nil, @shared_vis.id, @shared_user.api_key), {}, @headers do |response|
-          response.status.should == 404
-          response.body[:errors].should == 'Visualization of that user does not exist'
-        end
-      end
+      # BBG - Cannot send a url without a user
+      #it 'returns 404 if user at url is empty' do
+      #  ApplicationController.any_instance.stubs(:current_viewer).returns(@shared_user)
+      #  login_as(@shared_user, scope: @shared_user.organization.name)
+      #  get_json url(nil, @shared_vis.id, @shared_user.api_key), {}, @headers do |response|
+      #    response.status.should == 404
+      #    response.body[:errors].should == 'Visualization of that user does not exist'
+      #  end
+      #end
 
-      it 'returns 404 if user at url is empty, current_user is the owner and current_viewer has permission' do
-        ApplicationController.any_instance.stubs(:current_user).returns(@vis_owner)
-        ApplicationController.any_instance.stubs(:current_viewer).returns(@shared_user)
-        login_as(@shared_user, scope: @shared_user.organization.name)
-        get_json url(nil, @shared_vis.id, @shared_user.api_key), {}, @headers do |response|
-          response.status.should == 404
-          response.body[:errors].should == 'Visualization of that user does not exist'
-        end
-      end
+      # BBG - Cannot send a url without a user
+      #it 'returns 404 if user at url is empty, current_user is the owner and current_viewer has permission' do
+      #  ApplicationController.any_instance.stubs(:current_user).returns(@vis_owner)
+      #  ApplicationController.any_instance.stubs(:current_viewer).returns(@shared_user)
+      #  login_as(@shared_user, scope: @shared_user.organization.name)
+      #  get_json url(nil, @shared_vis.id, @shared_user.api_key), {}, @headers do |response|
+      #    response.status.should == 404
+      #    response.body[:errors].should == 'Visualization of that user does not exist'
+      #  end
+      #end
 
       it 'returns 404 if user at url does not match visualization owner' do
         app = ApplicationController.any_instance
@@ -2004,11 +2009,11 @@ describe Carto::Api::VisualizationsController do
 
   def login(user)
     login_as(user, {scope: user.username })
-    host! "#{user.username}.localhost.lan"
+    host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
   end
 
   def base_url
-    '/api/v1/viz'
+    api_v1_visualizations_index_url(user_domain: @user_1.username)
   end
 
   def response_body(params=nil)
