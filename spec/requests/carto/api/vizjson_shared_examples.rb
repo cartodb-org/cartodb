@@ -27,7 +27,7 @@ shared_examples_for 'vizjson generator' do
       @user_2 = FactoryGirl.create(:valid_user)
 
       @headers = { 'CONTENT_TYPE'  => 'application/json' }
-      host! "#{@user_1.subdomain}.localhost.lan"
+      host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
     end
 
     after(:all) do
@@ -188,28 +188,28 @@ shared_examples_for 'vizjson generator' do
 
       viz = api_visualization_creation(@user_1, @headers, { privacy: Visualization::Member::PRIVACY_PUBLIC, type: Visualization::Member::TYPE_DERIVED })
       viz_id = viz.id
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: valid_callback), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: valid_callback), {}, @headers
       last_response.status.should == 200
-      (last_response.body =~ /^#{valid_callback}\(\{/i).should eq 0
+      (last_response.body =~ /^#{valid_callback}\(\{/i).should eq 0 
 
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: invalid_callback1), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: invalid_callback1), {}, @headers
       last_response.status.should == 400
 
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: invalid_callback2), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: invalid_callback2), {}, @headers
       last_response.status.should == 400
 
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: invalid_callback3), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: invalid_callback3), {}, @headers
       last_response.status.should == 400
 
       # if param specified, must not be empty
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: ''), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: ''), {}, @headers
       last_response.status.should == 400
 
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key, callback: valid_callback2), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key, callback: valid_callback2), {}, @headers
       last_response.status.should == 200
       (last_response.body =~ /^#{valid_callback2}\(\{/i).should eq 0
 
-      get api_vx_visualizations_vizjson_url(id: viz_id, api_key: @api_key), {}, @headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: viz_id, api_key: @api_key), {}, @headers
       last_response.status.should == 200
       (last_response.body =~ /^\{/i).should eq 0
     end
@@ -222,19 +222,20 @@ shared_examples_for 'vizjson generator' do
 
       it 'renders vizjson vx' do
         viz = api_visualization_creation(@user_1, @headers, { privacy: Visualization::Member::PRIVACY_PUBLIC, type: Visualization::Member::TYPE_DERIVED })
-        get api_vx_visualizations_vizjson_url(id: viz.id, api_key: @api_key),
+        get api_vx_visualizations_vizjson_url(user_domain: @user_1.username, id: viz.id, api_key: @api_key),
           {}, @headers
         last_response.status.should == 200
         ::JSON.parse(last_response.body).keys.length.should > 1
       end
 
-      it 'returns 200 if subdomain is empty' do
-        viz = api_visualization_creation(@user_1, @headers, { privacy: Visualization::Member::PRIVACY_PUBLIC, type: Visualization::Member::TYPE_DERIVED })
-        # INFO: I couldn't get rid of subdomain, so I stubbed
-        CartoDB.stubs(:extract_subdomain).returns('')
-        get api_vx_visualizations_vizjson_url(id: viz.id)
-        last_response.status.should == 200
-      end
+      # BBG - This will not work with subdomainless urls used by bloomberg
+      #it 'returns 200 if subdomain is empty' do
+      #  viz = api_visualization_creation(@user_1, @headers, { privacy: Visualization::Member::PRIVACY_PUBLIC, type: Visualization::Member::TYPE_DERIVED })
+      #  # INFO: I couldn't get rid of subdomain, so I stubbed
+      #  #CartoDB.stubs(:extract_subdomain).returns('')
+      #  get api_vx_visualizations_vizjson_url(id: viz.id)
+      #  last_response.status.should == 200
+      #end
 
       it 'returns 200 if subdomain matches' do
         viz = api_visualization_creation(@user_1, @headers, { privacy: Visualization::Member::PRIVACY_PUBLIC, type: Visualization::Member::TYPE_DERIVED })
@@ -288,7 +289,7 @@ shared_examples_for 'vizjson generator' do
           privacy: 'public'
         }
 
-        post api_v1_visualizations_create_url(api_key: @api_key), payload.to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.subdomain, api_key: @api_key), payload.to_json, @headers
         last_response.status.should == 200
 
         # Set the attributions of the tables to check that they are included in the viz.json
@@ -301,7 +302,7 @@ shared_examples_for 'vizjson generator' do
 
         visualization = JSON.parse(last_response.body)
 
-        get api_vx_visualizations_vizjson_url(id: visualization.fetch('id'), api_key: @api_key), {}, @headers
+        get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: visualization.fetch('id'), api_key: @api_key), {}, @headers
 
         visualization = JSON.parse(last_response.body)
 
@@ -328,7 +329,7 @@ shared_examples_for 'vizjson generator' do
           privacy: 'private'
         }
 
-        post api_v1_visualizations_create_url(api_key: @api_key), payload.to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.subdomain, api_key: @api_key), payload.to_json, @headers
         last_response.status.should eq 200
 
         # Set the attributions of the tables to check that they are included in the viz.json
@@ -344,7 +345,7 @@ shared_examples_for 'vizjson generator' do
         # Stubs privacy of the visualization so that the viz_json generates a named_map
         Carto::Visualization.any_instance.stubs('retrieve_named_map?' => true)
 
-        get api_vx_visualizations_vizjson_url(id: visualization.fetch('id'), api_key: @api_key), {}, @headers
+        get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: visualization.fetch('id'), api_key: @api_key), {}, @headers
 
         visualization = JSON.parse(last_response.body)
 
@@ -371,7 +372,7 @@ shared_examples_for 'vizjson generator' do
           privacy: 'public'
         }
 
-        post api_v1_visualizations_create_url(api_key: @api_key), payload.to_json, @headers
+        post api_v1_visualizations_create_url(user_domain: @user_1.subdomain, api_key: @api_key), payload.to_json, @headers
         last_response.status.should == 200
         visualization = JSON.parse(last_response.body)
 
@@ -381,17 +382,17 @@ shared_examples_for 'vizjson generator' do
         table2_visualization.update_attribute(:attributions, 'attribution 2')
 
         # Call to cache the vizjson after generating it
-        get api_vx_visualizations_vizjson_url(id: visualization.fetch('id'), api_key: @api_key),
+        get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: visualization.fetch('id'), api_key: @api_key),
             { id: visualization.fetch('id') },
             @headers
 
         # Now force a change
-        put api_v1_visualizations_update_url(api_key: @api_key, id: table2_visualization.id),
+        put api_v1_visualizations_update_url(user_domain: @user_1.subdomain, api_key: @api_key, id: table2_visualization.id),
             { attributions: modified_table_2_attribution, id: table2_visualization.id }.to_json,
             @headers
         last_response.status.should == 200
 
-        get api_vx_visualizations_vizjson_url(id: visualization.fetch('id'), api_key: @api_key),
+        get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: visualization.fetch('id'), api_key: @api_key),
             { id: visualization.fetch('id') },
             @headers
         visualization = JSON.parse(last_response.body)
@@ -411,7 +412,7 @@ shared_examples_for 'vizjson generator' do
 
     before(:all) do
       @user_1 = FactoryGirl.create(:valid_user, private_tables_enabled: false)
-      host! "#{@user_1.subdomain}.localhost.lan"
+      host! CartoDB.get_hostname.sub!(/^https?\:\/\//, '')
       @map, @table, @table_visualization, @visualization = create_full_visualization(Carto::User.find(@user_1.id))
     end
 
@@ -423,7 +424,7 @@ shared_examples_for 'vizjson generator' do
     let(:viewer_user) { @visualization.user }
 
     it 'contain type, not kind, for basemaps' do
-      get api_vx_visualizations_vizjson_url(id: @visualization.id, api_key: @api_key), {}, http_json_headers
+      get api_vx_visualizations_vizjson_url(user_domain: @user_1.subdomain, id: @visualization.id, api_key: @api_key), {}, http_json_headers
       last_response.status.should eq 200
       visualization = JSON.parse(last_response.body)
       basemap_layer = visualization["layers"][0]
