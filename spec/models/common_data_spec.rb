@@ -64,7 +64,7 @@ describe CommonData do
   it 'should use SQL API V2 for export URLs' do
     stub_valid_api_response
 
-    @common_data.datasets.first['url'].should match (/common-data\.localhost\.lan\/api\/v2/)
+    @common_data.datasets.first['url'].should match ("common-data.#{CartoDB.session_domain}/api/v2")
   end
 
   it 'should use SQL API V2 from user defined base url for export URLs' do
