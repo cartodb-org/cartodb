@@ -250,6 +250,7 @@ $sEditButtonSize: 80px;
   @include opacity(1);
   @include transition(opacity, $opacityTransition);
   z-index: 1;
+  opacity: .2;
 }
 .MapCard-content--compact {
   min-height: 44px;
