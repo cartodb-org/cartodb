@@ -236,7 +236,12 @@ namespace :cartodb do
       execute_on_users_with_index(task_name, Proc.new { |user, i|
         begin
           log(sprintf("Trying on %-#{20}s %-#{20}s (%-#{4}s/%-#{4}s)...", user.username, user.database_name, i+1, count), task_name, database_host)
-          user.db_service.load_cartodb_functions(statement_timeout, extension_version)
+          # Only load cartodb extensions once per database, i.e. for dedicated users and org owners
+          load_cartodb_extension = user.account_type == '[DEDICATED]' || user.organization_owner?
+          if load_cartodb_extension
+            log(sprintf("Loading cartodb extension on %-#{20}s %-#{20}s (%-#{4}s/%-#{4}s)...", user.username, user.database_name, i+1, count), task_name, database_host)
+          end
+          user.db_service.load_cartodb_functions(statement_timeout, extension_version, load_cartodb_extension)
           log(sprintf("OK %-#{20}s %-#{20}s (%-#{4}s/%-#{4}s)", user.username, user.database_name, i+1, count), task_name, database_host)
           sleep(sleep)
         rescue => e
