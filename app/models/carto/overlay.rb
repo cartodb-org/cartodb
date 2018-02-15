@@ -20,7 +20,7 @@ module Carto
 
     # There can be at most one of this types per visualization
     UNIQUE_TYPES = [
-      'search', 'layer_selector', 'share', 'zoom', 'logo', 'loader', 'fullscreen', 'inset_map'
+      'header', 'search', 'layer_selector', 'share', 'zoom', 'logo', 'loader', 'fullscreen', 'inset_map'
     ].freeze
 
     BUILDER_COMPATIBLE_TYPES = ['search', 'layer_selector', 'share', 'fullscreen', 'loader', 'logo', 'zoom'].freeze
